@@ -1,0 +1,48 @@
+<Window x:Class="Kivoy.ToastWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        Topmost="True"
+        ShowActivated="False"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+        FontFamily="{DynamicResource AppFont}"
+        UseLayoutRounding="True">
+    <Border x:Name="Root"
+            Background="{DynamicResource CardBackground}"
+            BorderBrush="{DynamicResource CardBorder}"
+            BorderThickness="1"
+            CornerRadius="2"
+            Padding="14,11"
+            Margin="0,0,18,18"
+            Opacity="0">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="24" ShadowDepth="0" Opacity="0.4" Color="Black" />
+        </Border.Effect>
+        <StackPanel Orientation="Horizontal" Width="330">
+            <Border Width="30" Height="30" CornerRadius="15" Background="{DynamicResource Success}" VerticalAlignment="Top">
+                <TextBlock Text="&#xE73E;"
+                           FontFamily="{DynamicResource IconFont}"
+                           FontSize="11"
+                           Foreground="White"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Border>
+            <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                <TextBlock x:Name="TitleText"
+                           FontSize="13"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextPrimary}"
+                           TextTrimming="CharacterEllipsis" />
+                <TextBlock x:Name="MessageText"
+                           Margin="0,3,0,0"
+                           FontSize="12"
+                           Foreground="{DynamicResource TextSecondary}"
+                           TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

@@ -1,4 +1,4 @@
-# TubeDrop
+# Kivoy
 
 A modern Windows desktop app (WPF / .NET 8) for downloading YouTube videos and playlists, built with an IDM-style workflow. Sign in once with your Google account, paste a link, and download videos, audio, or entire playlists at your chosen quality.
 
@@ -23,15 +23,21 @@ A modern Windows desktop app (WPF / .NET 8) for downloading YouTube videos and p
 
 ## Installation
 
-1. Download the latest installer from the [Releases](https://github.com/usm007/TubeDrop/releases) page.
-2. Run `TubeDropSetup-x.x.x.exe` and follow the wizard.
-3. Launch TubeDrop, sign in to YouTube (optional but recommended), and start downloading.
+Two installers are provided on the [Releases](https://github.com/usm007/Kivoy/releases) page:
 
-The app installs to `Program Files\TubeDrop` and keeps its data (settings, history, engines) in `%LOCALAPPDATA%\TubeDrop`.
+| Installer | Size | Behavior |
+| --------- | ---- | -------- |
+| `KivoySetup-<version>-Lite.exe` | ~50 MB | Downloads the engines (yt-dlp, ffmpeg, deno) during installation, showing full download progress. Needs an internet connection. |
+| `KivoySetup-<version>-Full.exe` | ~145 MB | Everything bundled inside. Works fully offline — engines are pre-packaged and the app checks for engine updates on startup. |
+
+1. Download either installer and run it.
+2. Launch Kivoy, sign in to YouTube (optional but recommended), and start downloading.
+
+The app installs to `Program Files\Kivoy` and keeps its data (settings, history, engines) in `%LOCALAPPDATA%\Kivoy`.
 
 ## Download Engines
 
-On first run, TubeDrop downloads and manages the engines that power the downloads:
+On first run (or via the Lite installer), Kivoy downloads and manages the engines that power the downloads. The Full installer bundles them instead. On startup the app silently checks for a newer yt-dlp and updates it when available.
 
 | Engine | Purpose | Source |
 | ------ | ------- | ------ |
@@ -39,19 +45,19 @@ On first run, TubeDrop downloads and manages the engines that power the download
 | [ffmpeg / ffprobe](https://www.gyan.dev/ffmpeg/builds/) | Media merge & processing | `gyan.dev` builds |
 | [Deno](https://github.com/denoland/deno) | Script runtime used by the engine | `deno` releases |
 
-Engine binaries are stored in `%LOCALAPPDATA%\TubeDrop\bin`.
+Engine binaries are stored in `%LOCALAPPDATA%\Kivoy\bin`.
 
 ## Build from Source
 
 ```powershell
 # Publish a self-contained x64 build
-dotnet publish src\TubeDrop\TubeDrop.csproj -c Release -r win-x64 --self-contained true
+dotnet publish src\Kivoy\Kivoy.csproj -c Release -r win-x64 --self-contained true
 
 # Build the installer (requires Inno Setup 6)
-iscc installer\TubeDrop.iss
+iscc installer\Kivoy.iss
 ```
 
-The installer bundles the WebView2 Runtime bootstrapper and produces `TubeDropSetup-x.x.x.exe`.
+The installer bundles the WebView2 Runtime bootstrapper and produces `KivoySetup-x.x.x.exe`.
 
 ## Settings
 
@@ -77,7 +83,7 @@ The installer bundles the WebView2 Runtime bootstrapper and produces `TubeDropSe
 
 ## Privacy
 
-Your Google sign-in cookies are stored locally in `%LOCALAPPDATA%\TubeDrop` and are used only to authenticate downloads on your own machine. They are never uploaded anywhere.
+Your Google sign-in cookies are stored locally in `%LOCALAPPDATA%\Kivoy` and are used only to authenticate downloads on your own machine. They are never uploaded anywhere.
 
 ## License
 
