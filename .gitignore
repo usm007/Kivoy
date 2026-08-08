@@ -8,3 +8,4 @@ obj/
 *.cache
 packages/
 artifacts/
+installer/Setup/
