@@ -1,5 +1,9 @@
 # Kivoy
 
+<p align="center">
+  <img src="assets/banner.png" alt="Kivoy - a fast Windows media downloader" width="80%">
+</p>
+
 A modern Windows desktop app (WPF / .NET 8) for downloading YouTube videos and playlists, built with an IDM-style workflow. Sign in once with your Google account, paste a link, and download videos, audio, or entire playlists at your chosen quality.
 
 ## Features
