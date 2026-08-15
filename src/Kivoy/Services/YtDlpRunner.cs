@@ -27,7 +27,12 @@ public static class YtDlpRunner
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
 
-        if (File.Exists(EngineManager.DenoPath))
+        if (File.Exists(EngineManager.QuickJsPath))
+        {
+            psi.ArgumentList.Add("--js-runtimes");
+            psi.ArgumentList.Add($"quickjs:{EngineManager.QuickJsPath}");
+        }
+        else if (File.Exists(EngineManager.DenoPath))
         {
             psi.ArgumentList.Add("--js-runtimes");
             psi.ArgumentList.Add($"deno:{EngineManager.DenoPath}");

@@ -27,10 +27,37 @@ public static class EngineManager
     /// <summary>Folder bundled with the app (Program Files) that can seed the engines on first run.</summary>
     public static string SeedsDir => Path.Combine(AppContext.BaseDirectory, "engines");
 
-    public static string YtDlpPath => Path.Combine(BinDir, "yt-dlp.exe");
-    public static string FfmpegPath => Path.Combine(BinDir, "ffmpeg.exe");
-    public static string FfprobePath => Path.Combine(BinDir, "ffprobe.exe");
-    public static string DenoPath => Path.Combine(BinDir, "deno.exe");
+    public static string YtDlpPath => FindInPath("yt-dlp.exe") ?? Path.Combine(BinDir, "yt-dlp.exe");
+    public static string FfmpegPath => FindInPath("ffmpeg.exe") ?? Path.Combine(BinDir, "ffmpeg.exe");
+    public static string FfprobePath => FindInPath("ffprobe.exe") ?? Path.Combine(BinDir, "ffprobe.exe");
+    public static string QuickJsPath => FindInPath("qjs.exe") ?? Path.Combine(BinDir, "qjs.exe");
+    public static string DenoPath => FindInPath("deno.exe") ?? Path.Combine(BinDir, "deno.exe");
+
+    public static string? FindInPath(string exeName)
+    {
+        var localBin = Path.Combine(BinDir, exeName);
+        if (File.Exists(localBin))
+            return localBin;
+
+        var pathEnv = Environment.GetEnvironmentVariable("PATH");
+        if (string.IsNullOrWhiteSpace(pathEnv))
+            return null;
+
+        foreach (var dir in pathEnv.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
+        {
+            try
+            {
+                var full = Path.Combine(dir.Trim(), exeName);
+                if (File.Exists(full))
+                    return full;
+            }
+            catch
+            {
+                // ignore path parsing errors
+            }
+        }
+        return null;
+    }
 
     public static bool IsReady => File.Exists(YtDlpPath) && File.Exists(FfmpegPath);
 
@@ -41,8 +68,8 @@ public static class EngineManager
         if (!File.Exists(YtDlpPath) && !TrySeed("yt-dlp.exe"))
             await DownloadYtDlpAsync(progress, 0, 0.12, ct);
 
-        if (!File.Exists(DenoPath) && !TrySeed("deno.exe"))
-            await DownloadDenoAsync(progress, 0.12, 0.13, ct);
+        if (!File.Exists(QuickJsPath) && !TrySeed("qjs.exe"))
+            await DownloadQuickJsAsync(progress, 0.12, 0.13, ct);
 
         if (!File.Exists(FfmpegPath))
         {
@@ -182,41 +209,24 @@ public static class EngineManager
         File.Move(tmp, YtDlpPath, overwrite: true);
     }
 
-    private static async Task DownloadDenoAsync(
+    private static async Task DownloadQuickJsAsync(
         IProgress<EngineProgress>? progress,
         double start,
         double span,
         CancellationToken ct)
     {
         var arch = System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture
-            == System.Runtime.InteropServices.Architecture.Arm64
-                ? "aarch64-pc-windows-msvc"
-                : "x86_64-pc-windows-msvc";
-        var url = $"https://github.com/denoland/deno/releases/latest/download/deno-{arch}.zip";
-        var tmp = Path.Combine(BinDir, "deno.zip");
+            == System.Runtime.InteropServices.Architecture.X86
+                ? "x86"
+                : "x86_64";
+        var url = $"https://github.com/quickjs-ng/quickjs/releases/latest/download/qjs-windows-{arch}.exe";
+        var tmp = QuickJsPath + ".tmp";
 
-        progress?.Report(new EngineProgress("Downloading deno (JS runtime)…", start));
-        await DownloadToFileAsync(url, tmp, progress, "Downloading deno (JS runtime)…", start, start + span * 0.9, ct);
+        progress?.Report(new EngineProgress("Downloading QuickJS (lightweight JS runtime)…", start));
+        await DownloadToFileAsync(url, tmp, progress, "Downloading QuickJS (JS runtime)…", start, start + span, ct);
 
-        progress?.Report(new EngineProgress("Extracting deno…", start + span * 0.92));
-        var extractDir = Path.Combine(BinDir, "deno-extract");
-        if (Directory.Exists(extractDir))
-            Directory.Delete(extractDir, true);
-        Directory.CreateDirectory(extractDir);
-
-        await System.Threading.Tasks.Task.Run(() => ZipFile.ExtractToDirectory(tmp, extractDir), ct);
-
-        var deno = Directory
-            .GetFiles(extractDir, "deno.exe", SearchOption.AllDirectories)
-            .FirstOrDefault();
-
-        if (deno is null)
-            throw new EngineMissingException("Could not find deno.exe in the downloaded archive.");
-
-        File.Move(deno, DenoPath, overwrite: true);
-
-        try { File.Delete(tmp); Directory.Delete(extractDir, true); } catch { }
-        progress?.Report(new EngineProgress("Extracting deno…", start + span));
+        File.Move(tmp, QuickJsPath, overwrite: true);
+        progress?.Report(new EngineProgress("QuickJS engine ready", start + span));
     }
 
     private static async Task DownloadFfmpegAsync(

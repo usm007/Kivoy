@@ -23,15 +23,9 @@ function Download([string]$Name, [string]$Url, [string]$Out) {
 # yt-dlp - the core downloader (single exe)
 Download 'yt-dlp' 'https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe' (Join-Path $binDir 'yt-dlp.exe')
 
-# deno - JS runtime (zip)
-$denoZip = Join-Path $tmpDir 'deno.zip'
-Download 'deno (JS runtime)' 'https://github.com/denoland/deno/releases/latest/download/deno-x86_64-pc-windows-msvc.zip' $denoZip
-Write-Host 'Extracting deno ...'
-& tar.exe -xf $denoZip -C $binDir deno.exe
-if ($LASTEXITCODE -ne 0) { throw 'Failed to extract deno' }
-Remove-Item $denoZip -Force -ErrorAction SilentlyContinue
-Write-Host '   deno extracted.'
-Write-Host ''
+# QuickJS - lightweight JS runtime (single exe, ~2MB)
+Download 'QuickJS (JS runtime)' 'https://github.com/quickjs-ng/quickjs/releases/latest/download/qjs-windows-x86_64.exe' (Join-Path $binDir 'qjs.exe')
+
 
 # ffmpeg + ffprobe - media processing (zip)
 $ffZip = Join-Path $tmpDir 'ffmpeg.zip'

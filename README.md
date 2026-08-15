@@ -31,7 +31,7 @@ Two installers are provided on the [Releases](https://github.com/usm007/Kivoy/re
 
 | Installer | Size | Behavior |
 | --------- | ---- | -------- |
-| `KivoySetup-<version>-Lite.exe` | ~50 MB | Downloads the engines (yt-dlp, ffmpeg, deno) during installation, showing full download progress. Needs an internet connection. |
+| `KivoySetup-<version>-Lite.exe` | ~50 MB | Downloads the engines (yt-dlp, ffmpeg, quickjs) during installation, showing full download progress. Needs an internet connection. |
 | `KivoySetup-<version>-Full.exe` | ~145 MB | Everything bundled inside. Works fully offline — engines are pre-packaged and the app checks for engine updates on startup. |
 
 1. Download either installer and run it.
@@ -47,9 +47,7 @@ On first run (or via the Lite installer), Kivoy downloads and manages the engine
 | ------ | ------- | ------ |
 | [yt-dlp](https://github.com/yt-dlp/yt-dlp) | Core downloader | `yt-dlp` releases |
 | [ffmpeg / ffprobe](https://www.gyan.dev/ffmpeg/builds/) | Media merge & processing | `gyan.dev` builds |
-| [Deno](https://github.com/denoland/deno) | Script runtime used by the engine | `deno` releases |
-
-Engine binaries are stored in `%LOCALAPPDATA%\Kivoy\bin`.
+| [QuickJS](https://github.com/quickjs-ng/quickjs) | Lightweight JS script runtime for the engine (~2 MB) | `quickjs-ng` releases |
 
 ## Build from Source
 
@@ -75,12 +73,12 @@ The installer bundles the WebView2 Runtime bootstrapper and produces `KivoySetup
 
 - **.NET 8** / **WPF** / **MVVM Toolkit** (`CommunityToolkit.Mvvm`)
 - **WebView2** for YouTube sign-in
-- **yt-dlp**, **ffmpeg**, **Deno** for download processing
+- **yt-dlp**, **ffmpeg**, **QuickJS** for download processing
 
 ## Repos Used for Help
 
 - [yt-dlp/yt-dlp](https://github.com/yt-dlp/yt-dlp) — the underlying download engine
-- [denoland/deno](https://github.com/denoland/deno) — script runtime for the engine
+- [quickjs-ng/quickjs](https://github.com/quickjs-ng/quickjs) — lightweight JS runtime for the engine
 - [BtbN/FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds) — source of the ffmpeg builds used (hosted at [gyan.dev](https://www.gyan.dev/ffmpeg/builds/))
 - [CommunityToolkit/dotnet](https://github.com/CommunityToolkit/dotnet) — MVVM toolkit used for the UI
 - [Microsoft WebView2](https://developer.microsoft.com/microsoft-edge/webview2/) — embedded browser for sign-in
@@ -91,4 +89,4 @@ Your Google sign-in cookies are stored locally in `%LOCALAPPDATA%\Kivoy` and are
 
 ## License
 
-This project is for personal use. yt-dlp, ffmpeg, and Deno are third-party projects with their own licenses.
+This project is for personal use. yt-dlp, ffmpeg, and QuickJS are third-party projects with their own licenses.
