@@ -27,21 +27,20 @@ A modern Windows desktop app (WPF / .NET 8) for downloading YouTube videos and p
 
 ## Installation
 
-Two installers are provided on the [Releases](https://github.com/usm007/Kivoy/releases) page:
+Download the installer from the [Releases](https://github.com/usm007/Kivoy/releases) page:
 
 | Installer | Size | Behavior |
 | --------- | ---- | -------- |
-| `KivoySetup-<version>-Lite.exe` | ~50 MB | Downloads the engines (yt-dlp, ffmpeg, quickjs) during installation, showing full download progress. Needs an internet connection. |
-| `KivoySetup-<version>-Full.exe` | ~145 MB | Everything bundled inside. Works fully offline — engines are pre-packaged and the app checks for engine updates on startup. |
+| `KivoySetup-<version>.exe` | ~29 MB | Complete offline installer bundling all required download engines (`yt-dlp`, `ffmpeg`, `ffprobe`, `QuickJS`). |
 
-1. Download either installer and run it.
+1. Download `KivoySetup-<version>.exe` and run it.
 2. Launch Kivoy, sign in to YouTube (optional but recommended), and start downloading.
 
 The app installs to `Program Files\Kivoy` and keeps its data (settings, history, engines) in `%LOCALAPPDATA%\Kivoy`.
 
-## Download Engines
+## Download Engines & Periodic Updates
 
-On first run (or via the Lite installer), Kivoy downloads and manages the engines that power the downloads. The Full installer bundles them instead. On startup the app silently checks for a newer yt-dlp and updates it when available.
+Kivoy comes pre-packaged with all required engines. While Kivoy is running, it automatically checks for plugin/`yt-dlp` updates on startup and periodically in the background (every 6 hours). When a plugin update is applied, Kivoy displays a desktop toast notification to inform you.
 
 | Engine | Purpose | Source |
 | ------ | ------- | ------ |

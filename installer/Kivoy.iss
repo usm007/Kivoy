@@ -12,7 +12,7 @@ DefaultDirName={autopf}\Kivoy
 DefaultGroupName=Kivoy
 DisableProgramGroupPage=yes
 OutputDir=Setup
-OutputBaseFilename=KivoySetup-{#MyAppVersion}-Lite
+OutputBaseFilename=KivoySetup-{#MyAppVersion}
 SetupIconFile=..\src\Kivoy\Assets\app.ico
 Compression=lzma2
 SolidCompression=yes
@@ -33,7 +33,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "..\src\Kivoy\bin\Release\net8.0-windows\win-x64\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "*.pdb"
 Source: "redist\MicrosoftEdgeWebview2Setup.exe"; DestDir: "{tmp}"; Flags: ignoreversion
-Source: "install-engines.ps1"; DestDir: "{tmp}"; Flags: ignoreversion
+Source: "engines\*"; DestDir: "{app}\engines"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Kivoy"; Filename: "{app}\{#MyAppExeName}"
@@ -65,35 +65,8 @@ begin
     Log('WebView2 installer exit code: ' + IntToStr(ResultCode));
 end;
 
-procedure RunEngineSetup;
-var
-  ScriptPath: String;
-  PS: String;
-  ResultCode: Integer;
-begin
-  ScriptPath := ExpandConstant('{tmp}\install-engines.ps1');
-  if not FileExists(ScriptPath) then
-    Exit;
-  PS := '-NoProfile -ExecutionPolicy Bypass -File "' + ScriptPath + '"';
-  Log('Running engine setup script...');
-  if Exec('powershell.exe', PS, '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
-  begin
-    Log('Engine setup exit code: ' + IntToStr(ResultCode));
-    if ResultCode <> 0 then
-      MsgBox('Some download engines could not be installed. Kivoy will download them automatically on first run instead.', mbInformation, MB_OK);
-  end
-  else
-  begin
-    MsgBox('Could not run the engine setup. Kivoy will download the engines on first run instead.', mbInformation, MB_OK);
-  end;
-end;
-
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
-  if CurStep = ssPostInstall then
-  begin
-    if not IsWebView2Installed() then
-      InstallWebView2;
-    RunEngineSetup;
-  end;
+  if (CurStep = ssPostInstall) and (not IsWebView2Installed()) then
+    InstallWebView2;
 end;

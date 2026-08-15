@@ -86,14 +86,14 @@ public static class EngineManager
         progress?.Report(new EngineProgress($"Engine ready — yt-dlp {version} · ffmpeg", 1.0));
     }
 
-    /// <summary>Quietly checks whether a newer yt-dlp is available and updates when one exists.</summary>
-    public static async Task CheckForUpdatesAsync(IProgress<EngineProgress>? progress, CancellationToken ct = default)
+    /// <summary>Checks whether a newer yt-dlp is available and updates when one exists.</summary>
+    public static async Task<(bool updated, string? newVersion)> CheckForUpdatesAsync(IProgress<EngineProgress>? progress, CancellationToken ct = default)
     {
         var latest = await GetLatestYtDlpVersionAsync(ct);
         if (latest is null)
         {
             progress?.Report(new EngineProgress("Update check failed (offline?)", 1.0));
-            return;
+            return (false, null);
         }
 
         var current = await GetVersionAsync(ct);
@@ -102,10 +102,12 @@ public static class EngineManager
             progress?.Report(new EngineProgress($"Updating yt-dlp to {latest}…", 0));
             await UpdateYtDlpAsync(progress, ct);
             progress?.Report(new EngineProgress($"yt-dlp updated to {latest}", 1.0));
+            return (true, latest);
         }
         else
         {
             progress?.Report(new EngineProgress("yt-dlp is up to date", 1.0));
+            return (false, latest);
         }
     }
 

@@ -709,7 +709,7 @@ public partial class MainViewModel : ObservableObject
             }
 
             EngineReady = true;
-            _ = CheckEngineUpdatesAsync();
+            StartPeriodicEngineUpdateCheck();
         }
         catch (Exception ex)
         {
@@ -723,6 +723,19 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    private System.Threading.Timer? _engineUpdateTimer;
+
+    private void StartPeriodicEngineUpdateCheck()
+    {
+        _ = CheckEngineUpdatesAsync();
+        _engineUpdateTimer?.Dispose();
+        _engineUpdateTimer = new System.Threading.Timer(
+            _ => _ = CheckEngineUpdatesAsync(),
+            null,
+            TimeSpan.FromHours(6),
+            TimeSpan.FromHours(6));
+    }
+
     private async Task CheckEngineUpdatesAsync()
     {
         try
@@ -732,7 +745,14 @@ public partial class MainViewModel : ObservableObject
                 if (!string.IsNullOrWhiteSpace(p.Stage) && !p.Stage.StartsWith("Engine", StringComparison.Ordinal))
                     EngineStatusText = p.Stage;
             });
-            await Task.Run(() => EngineManager.CheckForUpdatesAsync(progress));
+            var (updated, newVersion) = await Task.Run(() => EngineManager.CheckForUpdatesAsync(progress));
+            if (updated && !string.IsNullOrWhiteSpace(newVersion))
+            {
+                System.Windows.Application.Current?.Dispatcher?.Invoke(() =>
+                {
+                    _toast.Show("Engine Updated", $"yt-dlp engine updated to {newVersion}");
+                });
+            }
         }
         catch
         {
