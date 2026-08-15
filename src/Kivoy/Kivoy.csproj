@@ -9,7 +9,7 @@
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
     <AssemblyName>Kivoy</AssemblyName>
     <RootNamespace>Kivoy</RootNamespace>
-    <Version>1.0.0</Version>
+    <Version>2.0.0</Version>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
   </PropertyGroup>
