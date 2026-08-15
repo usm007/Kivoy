@@ -237,13 +237,20 @@ public static class EngineManager
         double span,
         CancellationToken ct)
     {
-        const string url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip";
+        const string primaryUrl = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip";
+        const string fallbackUrl = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip";
         var tmp = Path.Combine(BinDir, "ffmpeg.zip");
-        var stage = start;
 
-        progress?.Report(new EngineProgress("Downloading ffmpeg…", stage));
+        progress?.Report(new EngineProgress("Downloading FFmpeg (media muxer)…", start));
 
-        await DownloadToFileAsync(url, tmp, progress, "Downloading ffmpeg…", start, start + span * 0.9, ct);
+        try
+        {
+            await DownloadToFileAsync(primaryUrl, tmp, progress, "Downloading FFmpeg…", start, start + span * 0.9, ct);
+        }
+        catch
+        {
+            await DownloadToFileAsync(fallbackUrl, tmp, progress, "Downloading FFmpeg (fallback)…", start, start + span * 0.9, ct);
+        }
 
         progress?.Report(new EngineProgress("Extracting ffmpeg…", start + span * 0.92));
         var extractDir = Path.Combine(BinDir, "ffmpeg-extract");
