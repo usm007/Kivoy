@@ -39,6 +39,10 @@ public static class EngineManager
         if (File.Exists(localBin))
             return localBin;
 
+        var seedBin = Path.Combine(SeedsDir, exeName);
+        if (File.Exists(seedBin))
+            return seedBin;
+
         var pathEnv = Environment.GetEnvironmentVariable("PATH");
         if (string.IsNullOrWhiteSpace(pathEnv))
             return null;
