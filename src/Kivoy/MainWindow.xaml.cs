@@ -11,6 +11,10 @@ namespace Kivoy;
 
 public partial class MainWindow : Window
 {
+    // Set when the user submits a fresh link; once analysis succeeds the
+    // download starts automatically using the existing DownloadCommand.
+    private bool _pendingAutoDownload;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -32,56 +36,139 @@ public partial class MainWindow : Window
         if (DataContext is MainViewModel vm)
         {
             vm.PropertyChanged += OnViewModelPropertyChanged;
-            ComposerUrlBox.KeyDown += ComposerUrlBox_KeyDown;
+            AddBarBox.KeyDown += AddBarBox_KeyDown;
         }
     }
 
-    // ---------- Add Download composer ----------
+    // ---------- Add Download bar flow ----------
 
-    private bool IsComposerOpen => ComposerHost.Visibility == Visibility.Visible;
-
-    private void NewDownload_Click(object sender, RoutedEventArgs e)
+    private void AddBarBox_KeyDown(object sender, KeyEventArgs e)
     {
-        ComposerHost.Visibility = Visibility.Visible;
-
-        if (DataContext is MainViewModel { HasItems: false } vm)
+        if (e.Key == Key.Enter)
         {
-            // fresh session: put focus in the link box
-            ComposerUrlBox.Focus();
+            e.Handled = true;
+            SubmitAddBar();
         }
     }
 
-    private void ComposerCancel_Click(object sender, RoutedEventArgs e)
-    {
-        if (DataContext is MainViewModel vm)
-            vm.DismissPanelCommand.Execute(null);
-        CloseComposer();
-    }
+    private void AddBarSubmit_Click(object sender, RoutedEventArgs e) => SubmitAddBar();
 
-    private void ComposerUrlBox_KeyDown(object sender, KeyEventArgs e)
+    private void SubmitAddBar()
     {
-        if (e.Key != Key.Enter || DataContext is not MainViewModel vm)
+        if (DataContext is not MainViewModel vm)
             return;
 
-        e.Handled = true;
-        if (vm.AnalyzeCommand.CanExecute(null))
-            vm.AnalyzeCommand.Execute(null);
+        if (!vm.HasItems)
+        {
+            // Fresh link: analyze first; the watcher auto-starts on success.
+            if (vm.AnalyzeCommand.CanExecute(null))
+            {
+                _pendingAutoDownload = true;
+                vm.AnalyzeCommand.Execute(null);
+            }
+        }
+        else
+        {
+            // Preview already resolved: Enter (re)starts the download.
+            TryStartDownload(vm);
+        }
+    }
+
+    private void TryStartDownload(MainViewModel vm)
+    {
+        _pendingAutoDownload = false;
+        if (vm.DownloadCommand.CanExecute(null))
+            vm.DownloadCommand.Execute(null);
+    }
+
+    private void AdvancedToggle_Click(object sender, RoutedEventArgs e)
+    {
+        AdvancedPanel.Visibility = AdvancedPanel.Visibility == Visibility.Visible
+            ? Visibility.Collapsed
+            : Visibility.Visible;
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(MainViewModel.HasItems)
-            && sender is MainViewModel { HasItems: false }
-            && IsComposerOpen)
+        if (sender is not MainViewModel vm)
+            return;
+
+        if (e.PropertyName != nameof(MainViewModel.HasItems))
+            return;
+
+        if (vm.HasItems && _pendingAutoDownload)
         {
-            // download started (or panel dismissed) — back to the list
-            CloseComposer();
+            // Analysis succeeded — start the download immediately.
+            TryStartDownload(vm);
+        }
+        else if (!vm.HasItems)
+        {
+            _pendingAutoDownload = false;
+
+            // Reset the bar for the next link after enqueue or dismiss.
+            if (!string.IsNullOrEmpty(AddBarBox.Text))
+                vm.Url = string.Empty;
         }
     }
 
-    private void CloseComposer()
+    // ---------- Drag & drop ----------
+
+    private void AddBar_DragOver(object sender, DragEventArgs e)
     {
-        ComposerHost.Visibility = Visibility.Collapsed;
+        e.Effects = e.Data.GetDataPresent(DataFormats.Text) || e.Data.GetDataPresent(DataFormats.UnicodeText)
+            ? DragDropEffects.Copy
+            : DragDropEffects.None;
+        e.Handled = true;
+    }
+
+    private void AddBar_Drop(object sender, DragEventArgs e)
+    {
+        var text = e.Data.GetData(DataFormats.UnicodeText) as string
+                   ?? e.Data.GetData(DataFormats.Text) as string;
+
+        if (string.IsNullOrWhiteSpace(text) || DataContext is not MainViewModel vm)
+            return;
+
+        vm.Url = text.Trim();
+        FocusAddBar();
+        e.Handled = true;
+    }
+
+    // ---------- Global Ctrl+V ----------
+
+    private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.V ||
+            (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
+            return;
+
+        // Let TextBoxes handle their own paste.
+        if (FocusManager.GetFocusedElement(this) is TextBox)
+            return;
+
+        string? text = null;
+        try
+        {
+            if (Clipboard.ContainsText())
+                text = Clipboard.GetText();
+        }
+        catch
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(text) || DataContext is not MainViewModel vm)
+            return;
+
+        vm.Url = text.Trim();
+        FocusAddBar();
+        e.Handled = true;
+    }
+
+    private void FocusAddBar()
+    {
+        AddBarBox.Focus();
+        AddBarBox.CaretIndex = AddBarBox.Text.Length;
     }
 
     // ---------- List interactions ----------

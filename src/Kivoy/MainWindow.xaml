@@ -12,7 +12,9 @@
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="ClearType"
         UseLayoutRounding="True"
-        SnapsToDevicePixels="True">
+        SnapsToDevicePixels="True"
+        AllowDrop="True"
+        PreviewKeyDown="Window_PreviewKeyDown">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
@@ -23,266 +25,557 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <!-- Header -->
-            <RowDefinition Height="56" />
-            <!-- Notifications -->
-            <RowDefinition Height="Auto" />
-            <!-- Content -->
             <RowDefinition Height="*" />
-            <!-- Status bar -->
             <RowDefinition Height="32" />
         </Grid.RowDefinitions>
 
-        <!-- ======================= Header ======================= -->
-        <Border Grid.Row="0"
-                Background="{DynamicResource CardBackground}"
-                BorderBrush="{DynamicResource CardBorder}"
-                BorderThickness="0,0,0,1">
-            <Grid Margin="16,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Image Source="pack://application:,,,/Assets/app_icon.png"
-                           Width="26" Height="26"
-                           Margin="0,0,10,0"
-                           VerticalAlignment="Center"
-                           RenderOptions.BitmapScalingMode="HighQuality" />
-                    <TextBlock Text="Kivoy"
-                               FontSize="16.5"
-                               FontWeight="SemiBold"
-                               Foreground="{DynamicResource TextPrimary}"
-                               VerticalAlignment="Center" />
-                </StackPanel>
-
-                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-
-                    <Button Style="{StaticResource PrimaryButton}"
-                            Height="36"
-                            Padding="15,0"
-                            Margin="0,0,10,0"
-                            Click="NewDownload_Click"
-                            ToolTip="Add a new download">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="+"
-                                       FontFamily="{StaticResource AppFont}"
-                                       FontSize="16"
-                                       FontWeight="Bold"
-                                       VerticalAlignment="Center"
-                                       LineHeight="17"
-                                       Margin="0,1,7,0" />
-                            <TextBlock Text="New Download" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-
-                    <Button Style="{StaticResource HeaderIconButton}"
-                            Command="{Binding PauseAllCommand}"
-                            ToolTip="Pause all downloads">
-                        <TextBlock Text="&#xE769;" FontFamily="{StaticResource IconFont}" />
-                    </Button>
-
-                    <Button Style="{StaticResource HeaderIconButton}"
-                            Command="{Binding OpenSettingsCommand}"
-                            ToolTip="Settings">
-                        <TextBlock Text="&#xE713;" FontFamily="{StaticResource IconFont}" />
-                    </Button>
-
-                    <Button Style="{StaticResource HeaderIconButton}"
-                            Command="{Binding ToggleThemeCommand}"
-                            ToolTip="Toggle light / dark theme">
-                        <TextBlock FontFamily="{StaticResource IconFont}">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Text" Value="&#xE706;" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsDark}" Value="True">
-                                            <Setter Property="Text" Value="&#xE708;" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </Button>
-
-                </StackPanel>
-            </Grid>
-        </Border>
-
-        <!-- ======================= Notifications ======================= -->
-        <StackPanel Grid.Row="1">
-
-            <!-- Error banner -->
-            <Border Margin="16,8,16,0"
-                    Background="{DynamicResource NotificationBackground}"
-                    BorderBrush="{DynamicResource Error}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="12,7"
-                    Visibility="{Binding Error, Converter={StaticResource IsNullOrEmptyToVisibilityConverter}}">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="&#xE7BA;"
-                               FontFamily="{StaticResource IconFont}"
-                               FontSize="12"
-                               Foreground="{DynamicResource Error}"
-                               VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding Error}"
-                               Foreground="{DynamicResource Error}"
-                               FontSize="12.5"
-                               TextWrapping="Wrap"
-                               VerticalAlignment="Center"
-                               Margin="9,0,0,0" />
-                </StackPanel>
-            </Border>
-
-            <!-- Engine setup banner -->
-            <Border Margin="16,8,16,0"
-                    Background="{DynamicResource NotificationBackground}"
-                    BorderBrush="{DynamicResource CardBorder}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="12,8"
-                    Visibility="{Binding EngineBusy, Converter={StaticResource BoolToVis}}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <ContentControl Style="{StaticResource Spinner}" Width="14" Height="14" VerticalAlignment="Center" />
-                    <StackPanel Grid.Column="1" Margin="11,0,11,0" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding EngineStatusText}"
-                                   FontSize="12"
-                                   FontWeight="SemiBold"
-                                   Foreground="{DynamicResource TextPrimary}" />
-                        <ProgressBar Height="4"
-                                     Margin="0,6,0,0"
-                                     Value="{Binding EnginePercent, Mode=OneWay}"
-                                     Maximum="100" />
-                    </StackPanel>
-                    <Button Grid.Column="2"
-                            Style="{StaticResource TextButton}"
-                            Visibility="{Binding EngineFailed, Converter={StaticResource BoolToVis}}"
-                            Command="{Binding RetryEngineCommand}"
-                            Content="Retry" />
-                </Grid>
-            </Border>
-
-        </StackPanel>
-
-        <!-- ======================= Content ======================= -->
-        <Grid Grid.Row="2">
+        <!-- ======================= Main ======================= -->
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="212" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!-- ============ Sidebar ============ -->
+            <!-- ============ Sidebar: identity + navigation ============ -->
             <Border Grid.Column="0"
                     BorderBrush="{DynamicResource CardBorder}"
                     BorderThickness="0,0,1,0"
                     Background="{DynamicResource SidebarBackground}">
-                <DockPanel Margin="0,10,0,10">
+                <DockPanel Margin="0,14,0,12">
 
-                    <!-- Single existing action, kept quiet -->
                     <Button DockPanel.Dock="Bottom"
                             Style="{StaticResource NavItemButton}"
-                            Command="{Binding OpenDestinationCommand}"
-                            ToolTip="Open the downloads folder">
+                            Command="{Binding OpenSettingsCommand}"
+                            ToolTip="Open settings"
+                            Margin="0,0,0,4">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE8B7;"
+                            <TextBlock Text="&#xE713;"
                                        FontFamily="{StaticResource IconFont}"
                                        FontSize="14"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="Open folder" Margin="10,0,0,0" VerticalAlignment="Center" />
+                            <TextBlock Text="Settings" Margin="10,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
 
-                    <ListBox Style="{StaticResource Sidebar}"
-                             SelectedValuePath="Tag"
-                             SelectedValue="{Binding SelectedView, Mode=TwoWay}">
-                        <ListBoxItem Tag="All">
-                            <DockPanel>
-                                <Border Style="{StaticResource CountBadge}" DockPanel.Dock="Right">
-                                    <TextBlock Text="{Binding ActiveJobs.Count}"
-                                               FontSize="10.5"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource Accent}" />
-                                </Border>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="&#xE80F;"
-                                               FontFamily="{StaticResource IconFont}"
-                                               FontSize="13.5"
-                                               VerticalAlignment="Center" />
-                                    <TextBlock Text="All Downloads" Margin="10,0,0,0" VerticalAlignment="Center" />
-                                </StackPanel>
-                            </DockPanel>
-                        </ListBoxItem>
-                        <ListBoxItem Tag="Active">
-                            <DockPanel>
-                                <Border Style="{StaticResource CountBadge}" DockPanel.Dock="Right"
-                                        Visibility="{Binding HasActive, Converter={StaticResource BoolToVis}}">
-                                    <TextBlock Text="{Binding ActiveCount}"
-                                               FontSize="10.5"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource Accent}" />
-                                </Border>
-                                <StackPanel Orientation="Horizontal">
-                                    <Control Style="{StaticResource DownloadGlyph}"
-                                             Width="13"
-                                             Height="13"
-                                             VerticalAlignment="Center" />
-                                    <TextBlock Text="Active" Margin="10,0,0,0" VerticalAlignment="Center" />
-                                </StackPanel>
-                            </DockPanel>
-                        </ListBoxItem>
-                        <ListBoxItem Tag="Completed">
-                            <DockPanel>
-                                <Border Style="{StaticResource CountBadge}" DockPanel.Dock="Right"
-                                        Visibility="{Binding HasHistory, Converter={StaticResource BoolToVis}}">
-                                    <TextBlock Text="{Binding HistoryCount}"
-                                               FontSize="10.5"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource Accent}" />
-                                </Border>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="&#xE73E;"
-                                               FontFamily="{StaticResource IconFont}"
-                                               FontSize="13.5"
-                                               VerticalAlignment="Center" />
-                                    <TextBlock Text="Completed" Margin="10,0,0,0" VerticalAlignment="Center" />
-                                </StackPanel>
-                            </DockPanel>
-                        </ListBoxItem>
-                    </ListBox>
+                    <StackPanel>
+                        <TextBlock Text="DOWNLOADS" Style="{StaticResource SidebarSectionHeader}" />
+
+                        <ListBox Style="{StaticResource Sidebar}"
+                                 SelectedValuePath="Tag"
+                                 SelectedValue="{Binding SelectedView, Mode=TwoWay}">
+                            <ListBoxItem Tag="All">
+                                <DockPanel>
+                                    <Border Style="{StaticResource CountBadge}" DockPanel.Dock="Right">
+                                        <TextBlock Text="{Binding ActiveJobs.Count}"
+                                                   FontSize="10.5"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource Accent}" />
+                                    </Border>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE80F;"
+                                                   FontFamily="{StaticResource IconFont}"
+                                                   FontSize="13.5"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Text="All Downloads" Margin="10,0,0,0" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DockPanel>
+                            </ListBoxItem>
+                            <ListBoxItem Tag="Active">
+                                <DockPanel>
+                                    <Border Style="{StaticResource CountBadge}" DockPanel.Dock="Right"
+                                            Visibility="{Binding HasActive, Converter={StaticResource BoolToVis}}">
+                                        <TextBlock Text="{Binding ActiveCount}"
+                                                   FontSize="10.5"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource Accent}" />
+                                    </Border>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Control Style="{StaticResource DownloadGlyph}"
+                                                 Width="13"
+                                                 Height="13"
+                                                 VerticalAlignment="Center" />
+                                        <TextBlock Text="Active" Margin="10,0,0,0" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DockPanel>
+                            </ListBoxItem>
+                            <ListBoxItem Tag="Completed">
+                                <DockPanel>
+                                    <Border Style="{StaticResource CountBadge}" DockPanel.Dock="Right"
+                                            Visibility="{Binding HasHistory, Converter={StaticResource BoolToVis}}">
+                                        <TextBlock Text="{Binding HistoryCount}"
+                                                   FontSize="10.5"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource Accent}" />
+                                    </Border>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE73E;"
+                                                   FontFamily="{StaticResource IconFont}"
+                                                   FontSize="13.5"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Text="Completed" Margin="10,0,0,0" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DockPanel>
+                            </ListBoxItem>
+                        </ListBox>
+                    </StackPanel>
                 </DockPanel>
             </Border>
 
-            <!-- ============ Jobs view ============ -->
-            <Grid Grid.Column="1"
-                  Visibility="{Binding IsJobsView, Converter={StaticResource BoolToVis}}">
+            <!-- ============ Workspace ============ -->
+            <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
+                    <!-- Add Download bar -->
+                    <RowDefinition Height="Auto" />
+                    <!-- Preview / advanced options -->
+                    <RowDefinition Height="Auto" />
+                    <!-- Notifications -->
+                    <RowDefinition Height="Auto" />
+                    <!-- List -->
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <!-- Page header -->
-                <Grid Grid.Row="0" Margin="20,12,20,2">
-                    <TextBlock Text="Active Downloads" Style="{StaticResource PageTitle}" VerticalAlignment="Center" />
-                    <Border Style="{StaticResource CountBadge}" HorizontalAlignment="Right" VerticalAlignment="Center"
-                            Visibility="{Binding HasActive, Converter={StaticResource BoolToVis}}">
-                        <TextBlock Text="{Binding ActiveCount, StringFormat='{}{0} active'}"
-                                   FontSize="11"
-                                   FontWeight="SemiBold"
-                                   Foreground="{DynamicResource Accent}" />
+                <!-- Page title -->
+                <Grid Grid.Row="0" Margin="20,14,20,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Downloads" Style="{StaticResource PageTitle}" VerticalAlignment="Center" />
+                    <Border Grid.Column="1"
+                            Width="230"
+                            Height="30"
+                            VerticalAlignment="Center"
+                            Background="{DynamicResource InputBackground}"
+                            BorderBrush="{DynamicResource InputBorder}"
+                            BorderThickness="1"
+                            CornerRadius="7"
+                            Visibility="{Binding IsCompletedView, Converter={StaticResource BoolToVis}}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="&#xE721;"
+                                       FontFamily="{StaticResource IconFont}"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource TextTertiary}"
+                                       VerticalAlignment="Center"
+                                       Margin="10,0,0,0" />
+                            <TextBox Grid.Column="1"
+                                     Background="Transparent"
+                                     BorderBrush="Transparent"
+                                     BorderThickness="0"
+                                     Padding="7,0"
+                                     FontSize="12"
+                                     VerticalContentAlignment="Center"
+                                     Text="{Binding HistorySearch, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
                     </Border>
                 </Grid>
 
-                <!-- Download cards -->
-                <ListView Grid.Row="1"
-                          Margin="20,8,20,12"
+                <!-- ===== Inline Add Download bar ===== -->
+                <Border Grid.Row="1"
+                        Margin="20,0,20,0"
+                        MinHeight="44"
+                        Background="{DynamicResource CardBackground}"
+                        BorderBrush="{DynamicResource InputBorder}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        AllowDrop="True"
+                        Drop="AddBar_Drop"
+                        DragOver="AddBar_DragOver">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Control Style="{StaticResource DownloadGlyph}"
+                                 Width="15"
+                                 Height="15"
+                                 Margin="13,0,0,0"
+                                 VerticalAlignment="Center"
+                                 Foreground="{DynamicResource GlyphSecondary}" />
+
+                        <TextBox x:Name="AddBarBox"
+                                 Grid.Column="1"
+                                 Background="Transparent"
+                                 BorderBrush="Transparent"
+                                 BorderThickness="0"
+                                 Padding="11,11,4,11"
+                                 FontSize="12.5"
+                                 VerticalContentAlignment="Center"
+                                 ToolTip="Paste a link, drag a URL here, or press Enter"
+                                 Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <ContentControl Grid.Column="2"
+                                        Style="{StaticResource Spinner}"
+                                        Width="14" Height="14"
+                                        Margin="0,0,11,0"
+                                        VerticalAlignment="Center"
+                                        Visibility="{Binding IsAnalyzing, Converter={StaticResource BoolToVis}}" />
+
+                        <Button Grid.Column="2"
+                                x:Name="AddBarSubmit"
+                                Width="28" Height="28"
+                                Margin="0,0,8,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Focusable="False"
+                                Click="AddBarSubmit_Click"
+                                ToolTip="Analyze, then download">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Bd"
+                                            Background="{DynamicResource AccentSubtle}"
+                                            CornerRadius="6"
+                                            Width="28" Height="28">
+                                        <TextBlock Text="+"
+                                                   FontFamily="{StaticResource AppFont}"
+                                                   FontSize="15"
+                                                   FontWeight="Bold"
+                                                   Foreground="{DynamicResource Accent}"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#DDE3FC" />
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="Bd" Property="Opacity" Value="0.8" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <!-- ===== Preview strip (after analyze) ===== -->
+                <StackPanel Grid.Row="2" Margin="20,8,20,0"
+                            Visibility="{Binding HasItems, Converter={StaticResource BoolToVis}}">
+
+                    <Border Background="{DynamicResource CardBackground}"
+                            BorderBrush="{DynamicResource Accent}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="10,8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Border Width="80" Height="45" CornerRadius="5"
+                                    Background="{DynamicResource ThumbnailBg}"
+                                    ClipToBounds="True"
+                                    VerticalAlignment="Center">
+                                <Image Source="{Binding SourceThumbnail}" Stretch="UniformToFill" />
+                            </Border>
+
+                            <StackPanel Grid.Column="1" Margin="11,0,10,0" VerticalAlignment="Center">
+                                <TextBlock FontSize="12.5" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimary}"
+                                           TextTrimming="CharacterEllipsis">
+                                    <Run Text="{Binding SourceTitle, Mode=OneWay}" /><Run Text="{Binding PlaylistTitle, Mode=OneWay}" />
+                                </TextBlock>
+                                <TextBlock FontSize="10.5" Foreground="{DynamicResource TextTertiary}" Margin="0,2,0,0"
+                                           TextTrimming="CharacterEllipsis">
+                                    <Run Text="{Binding SourceChannel, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{Binding SourceDuration, Mode=OneWay}" /><Run Text="{Binding PlaylistCount, Mode=OneWay, StringFormat='Playlist · {0} videos'}" />
+                                </TextBlock>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,10,0">
+                                <RadioButton GroupName="Mode" Content="Video" FontSize="12"
+                                             IsChecked="{Binding IsVideoMode, Mode=TwoWay}" />
+                                <RadioButton GroupName="Mode" Content="Audio" FontSize="12" Margin="9,0,0,0"
+                                             IsChecked="{Binding IsAudioMode, Mode=TwoWay}" />
+                                <ComboBox Width="112" Height="28" FontSize="12" Margin="11,0,0,0"
+                                          ItemsSource="{Binding VideoQualityOptions}"
+                                          SelectedItem="{Binding SelectedVideoQuality, Mode=TwoWay}"
+                                          Visibility="{Binding IsVideoMode, Converter={StaticResource BoolToVis}}" />
+                                <ComboBox Width="112" Height="28" FontSize="12" Margin="11,0,0,0"
+                                          ItemsSource="{Binding AudioQualityOptions}"
+                                          SelectedItem="{Binding SelectedAudioQuality, Mode=TwoWay}"
+                                          Visibility="{Binding IsAudioMode, Converter={StaticResource BoolToVis}}" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button Style="{StaticResource IconButton}"
+                                        Command="{Binding DismissPanelCommand}"
+                                        ToolTip="Dismiss preview">
+                                    <TextBlock Text="&#xE8BB;" FontFamily="{StaticResource IconFont}" FontSize="11.5" />
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Secondary: advanced options toggle -->
+                    <StackPanel Orientation="Horizontal" Margin="2,5,0,0">
+                        <Button Style="{StaticResource TextButton}"
+                                Click="AdvancedToggle_Click"
+                                x:Name="AdvancedToggle">
+                            <TextBlock Text="More options" FontSize="11.5" />
+                        </Button>
+                        <TextBlock Text="·  Enter to start the download"
+                                   FontSize="11.5"
+                                   Foreground="{DynamicResource TextTertiary}"
+                                   VerticalAlignment="Center"
+                                   Margin="6,0,0,0" />
+                    </StackPanel>
+
+                    <!-- Advanced options panel -->
+                    <Border x:Name="AdvancedPanel"
+                            Background="{DynamicResource CardBackground}"
+                            BorderBrush="{DynamicResource CardBorder}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12"
+                            Margin="0,6,0,0"
+                            Visibility="Collapsed">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel>
+                                    <TextBlock Text="FORMAT" Style="{StaticResource SectionHeader}" Margin="0,0,0,5" />
+                                    <Grid>
+                                        <ComboBox Width="105"
+                                                  ItemsSource="{Binding ContainerOptions}"
+                                                  SelectedItem="{Binding SelectedContainer, Mode=TwoWay}"
+                                                  Visibility="{Binding IsVideoMode, Converter={StaticResource BoolToVis}}" />
+                                        <ComboBox Width="105"
+                                                  ItemsSource="{Binding AudioFormats}"
+                                                  SelectedItem="{Binding SelectedAudioFormat, Mode=TwoWay}"
+                                                  Visibility="{Binding IsAudioMode, Converter={StaticResource BoolToVis}}" />
+                                    </Grid>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                    <TextBlock Text="CONNECTIONS" Style="{StaticResource SectionHeader}" Margin="0,0,0,5" />
+                                    <ComboBox Width="68"
+                                              ItemsSource="{Binding ConnectionsOptions}"
+                                              SelectedItem="{Binding Connections, Mode=TwoWay}"
+                                              ToolTip="Parallel fragment connections" />
+                                </StackPanel>
+
+                                <CheckBox Grid.Column="2"
+                                          Content="Subtitles"
+                                          Margin="12,22,0,0"
+                                          IsChecked="{Binding IncludeSubtitles, Mode=TwoWay}"
+                                          Visibility="{Binding IsVideoMode, Converter={StaticResource BoolToVis}}"
+                                          ToolTip="Embed English subtitles" />
+
+                                <StackPanel Grid.Column="4" Margin="12,0,0,0">
+                                    <TextBlock Text="SAVE TO" Style="{StaticResource SectionHeader}" Margin="0,0,0,5" />
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox Padding="8,4"
+                                                 FontSize="12"
+                                                 Text="{Binding DestinationFolder, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Button Grid.Column="1"
+                                                Style="{StaticResource IconButton}"
+                                                Margin="5,0,0,0"
+                                                Command="{Binding BrowseDestinationCommand}"
+                                                ToolTip="Choose folder">
+                                            <TextBlock Text="&#xE8B7;" FontFamily="{DynamicResource IconFont}" FontSize="11.5" />
+                                        </Button>
+                                        <Button Grid.Column="2"
+                                                Style="{StaticResource IconButton}"
+                                                Margin="3,0,0,0"
+                                                Command="{Binding OpenDestinationCommand}"
+                                                ToolTip="Open folder">
+                                            <TextBlock Text="&#xE838;" FontFamily="{DynamicResource IconFont}" FontSize="11.5" />
+                                        </Button>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Playlist picker -->
+                            <Border Background="{DynamicResource InputBackground}"
+                                    BorderBrush="{DynamicResource InputBorder}"
+                                    BorderThickness="1"
+                                    CornerRadius="6"
+                                    Margin="0,10,0,0"
+                                    Padding="3"
+                                    MaxHeight="180"
+                                    Visibility="{Binding IsPlaylist, Converter={StaticResource BoolToVis}}">
+                                <DockPanel>
+                                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5,4,5,4">
+                                        <Button Style="{StaticResource TextButton}" Content="Select all" Command="{Binding SelectAllCommand}" />
+                                        <Button Style="{StaticResource TextButton}" Content="None" Command="{Binding SelectNoneCommand}" Margin="4,0,0,0" />
+                                        <TextBox Width="70"
+                                                 Padding="6,3"
+                                                 FontSize="11"
+                                                 Margin="8,0,0,0"
+                                                 Tag="1–20"
+                                                 Text="{Binding RangeInput, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Button Style="{StaticResource TextButton}" Content="Apply" Command="{Binding ApplyRangeCommand}" Margin="6,0,0,0" />
+                                        <TextBlock Text="{Binding Error}"
+                                                   Foreground="{DynamicResource Error}"
+                                                   FontSize="11"
+                                                   Margin="10,0,0,0"
+                                                   VerticalAlignment="Center"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Visibility="{Binding Error, Converter={StaticResource IsNullOrEmptyToVisibilityConverter}}" />
+                                    </StackPanel>
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                                                  Style="{StaticResource SlimScrollViewer}">
+                                        <ItemsControl ItemsSource="{Binding Items}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Padding="7,4" Background="Transparent">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center" />
+                                                            <TextBlock Grid.Column="1"
+                                                                       Text="{Binding Title}"
+                                                                       Margin="9,0,9,0"
+                                                                       FontSize="11.5"
+                                                                       Foreground="{DynamicResource TextPrimary}"
+                                                                       TextTrimming="CharacterEllipsis"
+                                                                       VerticalAlignment="Center" />
+                                                            <TextBlock Grid.Column="2"
+                                                                       Text="{Binding DurationText}"
+                                                                       FontSize="10.5"
+                                                                       Foreground="{DynamicResource TextTertiary}"
+                                                                       VerticalAlignment="Center" />
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </DockPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- ===== Notifications ===== -->
+                <StackPanel Grid.Row="3" Margin="20,8,20,0">
+
+                    <!-- Engine setup banner -->
+                    <Border Margin="0,0,0,6"
+                            Background="{DynamicResource NotificationBackground}"
+                            BorderBrush="{DynamicResource CardBorder}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12,8"
+                            Visibility="{Binding EngineBusy, Converter={StaticResource BoolToVis}}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ContentControl Style="{StaticResource Spinner}" Width="14" Height="14" VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1" Margin="11,0,11,0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding EngineStatusText}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimary}" />
+                                <ProgressBar Height="4"
+                                             Margin="0,6,0,0"
+                                             Value="{Binding EnginePercent, Mode=OneWay}"
+                                             Maximum="100" />
+                            </StackPanel>
+                            <Button Grid.Column="2"
+                                    Style="{StaticResource TextButton}"
+                                    Visibility="{Binding EngineFailed, Converter={StaticResource BoolToVis}}"
+                                    Command="{Binding RetryEngineCommand}"
+                                    Content="Retry" />
+                        </Grid>
+                    </Border>
+
+                    <!-- Login required -->
+                    <Border Background="{DynamicResource NotificationBackground}"
+                            BorderBrush="{DynamicResource Accent}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12,7"
+                            Margin="0,0,0,6"
+                            Visibility="{Binding LoginRequired, Converter={StaticResource BoolToVis}}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="&#xE77B;"
+                                           FontFamily="{StaticResource IconFont}"
+                                           FontSize="12.5"
+                                           Foreground="{DynamicResource Accent}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="This video needs a signed-in YouTube account."
+                                           FontSize="12.5"
+                                           Foreground="{DynamicResource TextPrimary}"
+                                           VerticalAlignment="Center"
+                                           Margin="8,0,0,0" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button Style="{StaticResource PrimaryButton}"
+                                        Padding="12,4"
+                                        Command="{Binding SignInYouTubeCommand}">
+                                    <TextBlock Text="Sign in to YouTube" FontSize="11.5" FontWeight="SemiBold" />
+                                </Button>
+                                <Button Style="{StaticResource IconButton}"
+                                        Margin="5,0,0,0"
+                                        Command="{Binding DismissLoginNoticeCommand}">
+                                    <TextBlock Text="&#xE8BB;" FontFamily="{StaticResource IconFont}" FontSize="11.5" />
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Analyze error -->
+                    <Border Background="{DynamicResource NotificationBackground}"
+                            BorderBrush="{DynamicResource Error}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12,7"
+                            Visibility="{Binding Error, Converter={StaticResource IsNullOrEmptyToVisibilityConverter}}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE7BA;"
+                                       FontFamily="{StaticResource IconFont}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource Error}"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding Error}"
+                                       Foreground="{DynamicResource Error}"
+                                       FontSize="12.5"
+                                       TextWrapping="Wrap"
+                                       VerticalAlignment="Center"
+                                       Margin="9,0,0,0" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- ===== Download cards ===== -->
+                <ListView Grid.Row="4"
+                          Margin="20,10,20,12"
                           ItemsSource="{Binding ViewJobs}"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                           Background="Transparent"
@@ -302,7 +595,6 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Thumbnail 16:9 -->
                                 <Grid Grid.Column="0" Width="150" Height="84" VerticalAlignment="Center">
                                     <Border CornerRadius="6" Background="{DynamicResource ThumbnailBg}" ClipToBounds="True">
                                         <Image Source="{Binding Thumbnail}"
@@ -327,7 +619,6 @@
                                     </Border>
                                 </Grid>
 
-                                <!-- Info -->
                                 <StackPanel Grid.Column="1" Margin="12,0,12,0" VerticalAlignment="Center">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -383,7 +674,6 @@
                                     </StackPanel>
                                 </StackPanel>
 
-                                <!-- Actions -->
                                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                                     <Button Style="{StaticResource CardActionButton}"
                                             Command="{Binding PauseCommand}"
@@ -426,83 +716,17 @@
                     </ListView.ItemTemplate>
                 </ListView>
 
-                <!-- Empty state — small and quiet -->
-                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"
-                            Visibility="{Binding HasActive, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                    <Control Style="{StaticResource DownloadGlyph}"
-                             Width="28" Height="28"
-                             HorizontalAlignment="Center"
-                             Foreground="{DynamicResource GlyphSecondary}" />
-                    <TextBlock Text="No downloads yet"
-                               FontSize="14"
-                               FontWeight="SemiBold"
-                               Foreground="{DynamicResource TextPrimary}"
-                               HorizontalAlignment="Center"
-                               Margin="0,10,0,0" />
-                    <TextBlock Text="Use New Download to add your first link."
-                               FontSize="11.5"
-                               Foreground="{DynamicResource TextTertiary}"
-                               HorizontalAlignment="Center"
-                               Margin="0,3,0,0" />
-                </StackPanel>
-            </Grid>
-
-            <!-- ============ Completed view ============ -->
-            <Grid Grid.Column="1"
-                  Visibility="{Binding IsCompletedView, Converter={StaticResource BoolToVis}}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <!-- Page header + search -->
-                <Grid Grid.Row="0" Margin="20,12,20,2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="Completed Downloads" Style="{StaticResource PageTitle}" VerticalAlignment="Center" />
-                    <Border Grid.Column="1"
-                            Width="230"
-                            Height="30"
-                            VerticalAlignment="Center"
-                            Background="{DynamicResource InputBackground}"
-                            BorderBrush="{DynamicResource InputBorder}"
-                            BorderThickness="1"
-                            CornerRadius="7">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="&#xE721;"
-                                       FontFamily="{StaticResource IconFont}"
-                                       FontSize="11"
-                                       Foreground="{DynamicResource TextTertiary}"
-                                       VerticalAlignment="Center"
-                                       Margin="10,0,0,0" />
-                            <TextBox Grid.Column="1"
-                                     Background="Transparent"
-                                     BorderBrush="Transparent"
-                                     BorderThickness="0"
-                                     Padding="7,0"
-                                     FontSize="12"
-                                     VerticalContentAlignment="Center"
-                                     Text="{Binding HistorySearch, UpdateSourceTrigger=PropertyChanged}" />
-                        </Grid>
-                    </Border>
-                </Grid>
-
-                <!-- Compact completed rows -->
-                <ListView Grid.Row="1"
-                          Margin="20,8,20,12"
+                <!-- ===== Compact completed rows ===== -->
+                <ListView Grid.Row="4"
+                          Margin="20,10,20,12"
                           ItemsSource="{Binding HistoryItems}"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                           Background="Transparent"
                           BorderThickness="0"
                           Padding="0"
                           SelectionMode="Single"
-                          PreviewMouseDoubleClick="HistoryList_DoubleClick">
+                          PreviewMouseDoubleClick="HistoryList_DoubleClick"
+                          Visibility="{Binding IsCompletedView, Converter={StaticResource BoolToVis}}">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem" BasedOn="{StaticResource CompletedRowItem}" />
                     </ListView.ItemContainerStyle>
@@ -573,410 +797,30 @@
                     </ListView.ItemTemplate>
                 </ListView>
 
-                <!-- Empty history -->
-                <StackPanel Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"
-                            Visibility="{Binding HasHistory, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                    <TextBlock Text="&#xE81C;"
-                               FontFamily="{StaticResource IconFont}"
-                               FontSize="24"
-                               Foreground="{DynamicResource GlyphSecondary}"
-                               HorizontalAlignment="Center" />
-                    <TextBlock Text="Nothing here yet"
-                               FontSize="14"
+                <!-- ===== Quiet empty state ===== -->
+                <StackPanel Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Visibility="{Binding HasActive, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                    <Control Style="{StaticResource DownloadGlyph}"
+                             Width="26" Height="26"
+                             HorizontalAlignment="Center"
+                             Foreground="{DynamicResource GlyphSecondary}" />
+                    <TextBlock Text="No downloads yet"
+                               FontSize="13.5"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource TextPrimary}"
                                HorizontalAlignment="Center"
-                               Margin="0,10,0,0" />
-                    <TextBlock Text="Completed downloads will appear here."
+                               Margin="0,9,0,0" />
+                    <TextBlock Text="Paste a link above to begin"
                                FontSize="11.5"
                                Foreground="{DynamicResource TextTertiary}"
                                HorizontalAlignment="Center"
                                Margin="0,3,0,0" />
                 </StackPanel>
             </Grid>
-            <!-- ============ Add Download composer (in-window) ============ -->
-            <Border x:Name="ComposerHost"
-                    Grid.Column="1"
-                    Background="{DynamicResource WindowBackground}"
-                    Visibility="Collapsed">
-                <DockPanel>
-                    <!-- Footer actions -->
-                    <Border DockPanel.Dock="Bottom"
-                            Background="{DynamicResource CardBackground}"
-                            BorderBrush="{DynamicResource CardBorder}"
-                            BorderThickness="0,1,0,0"
-                            Padding="20,10">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Style="{StaticResource GhostButton}"
-                                    Content="Cancel"
-                                    IsCancel="True"
-                                    Click="ComposerCancel_Click"
-                                    Padding="16,7"
-                                    Margin="0,0,8,0" />
-                            <Button Style="{StaticResource PrimaryButton}"
-                                    Command="{Binding DownloadCommand}"
-                                    Padding="18,7"
-                                    ToolTip="{Binding DestinationFolder}">
-                                <StackPanel Orientation="Horizontal">
-                                    <Control Style="{StaticResource DownloadGlyph}"
-                                             Width="14"
-                                             Height="14"
-                                             Margin="0,0,7,0" />
-                                    <TextBlock Text="{Binding DownloadLabel}" FontSize="13" FontWeight="SemiBold" />
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Border>
-
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
-                                  Style="{StaticResource SlimScrollViewer}">
-                        <StackPanel Margin="20,16,20,12">
-
-                            <!-- Sign-in required notice -->
-                            <Border Background="{DynamicResource NotificationBackground}"
-                                    BorderBrush="{DynamicResource Accent}"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Padding="12,8"
-                                    Margin="0,0,0,12"
-                                    Visibility="{Binding LoginRequired, Converter={StaticResource BoolToVis}}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <TextBlock Text="&#xE77B;"
-                                                   FontFamily="{StaticResource IconFont}"
-                                                   FontSize="13"
-                                                   Foreground="{DynamicResource Accent}"
-                                                   VerticalAlignment="Center" />
-                                        <TextBlock Text="This video needs a signed-in YouTube account."
-                                                   FontSize="12.5"
-                                                   Foreground="{DynamicResource TextPrimary}"
-                                                   VerticalAlignment="Center"
-                                                   Margin="8,0,0,0" />
-                                    </StackPanel>
-
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                                        <Button Style="{StaticResource PrimaryButton}"
-                                                Padding="13,5"
-                                                Command="{Binding SignInYouTubeCommand}">
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="&#xE77B;"
-                                                           FontFamily="{StaticResource IconFont}"
-                                                           FontSize="11.5"
-                                                           VerticalAlignment="Center"
-                                                           Margin="0,0,6,0" />
-                                                <TextBlock Text="Sign in to YouTube" FontSize="12" FontWeight="SemiBold" />
-                                            </StackPanel>
-                                        </Button>
-                                        <Button Style="{StaticResource IconButton}"
-                                                Margin="6,0,0,0"
-                                                Command="{Binding DismissLoginNoticeCommand}"
-                                                ToolTip="Dismiss">
-                                            <TextBlock Text="&#xE8BB;" FontFamily="{StaticResource IconFont}" FontSize="11.5" />
-                                        </Button>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-
-                            <!-- URL row -->
-                            <Border Padding="12"
-                                    Background="{DynamicResource CardBackground}"
-                                    BorderBrush="{DynamicResource CardBorder}"
-                                    BorderThickness="1"
-                                    CornerRadius="8">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <Border Grid.Column="0"
-                                            Background="{DynamicResource InputBackground}"
-                                            BorderBrush="{DynamicResource InputBorder}"
-                                            BorderThickness="1"
-                                            CornerRadius="6"
-                                            Height="34">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Text="&#xE721;"
-                                                       FontFamily="{StaticResource IconFont}"
-                                                       FontSize="11.5"
-                                                       Foreground="{DynamicResource TextTertiary}"
-                                                       VerticalAlignment="Center"
-                                                       Margin="11,0,0,0" />
-                                            <TextBox x:Name="ComposerUrlBox"
-                                                     Grid.Column="1"
-                                                     Background="Transparent"
-                                                     BorderBrush="Transparent"
-                                                     BorderThickness="0"
-                                                     Padding="8,0"
-                                                     VerticalContentAlignment="Center"
-                                                     Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}"
-                                                     FontSize="12.5" />
-                                        </Grid>
-                                    </Border>
-
-                                    <Button Grid.Column="1"
-                                            Style="{StaticResource GhostButton}"
-                                            Margin="8,0,0,0"
-                                            Command="{Binding PasteUrlCommand}"
-                                            ToolTip="Paste from clipboard">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="&#xE77F;"
-                                                       FontFamily="{StaticResource IconFont}"
-                                                       FontSize="11.5"
-                                                       Margin="0,0,6,0"
-                                                       VerticalAlignment="Center" />
-                                            <TextBlock Text="Paste" FontSize="12.5" />
-                                        </StackPanel>
-                                    </Button>
-
-                                    <Button Grid.Column="2"
-                                            Style="{StaticResource PrimaryButton}"
-                                            Margin="8,0,0,0"
-                                            Padding="15,7"
-                                            Command="{Binding AnalyzeCommand}"
-                                            ToolTip="Analyze link (Enter)">
-                                        <Grid>
-                                            <TextBlock Text="Analyze"
-                                                       FontSize="12.5"
-                                                       FontWeight="SemiBold"
-                                                       Visibility="{Binding IsAnalyzing, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                                            <StackPanel Orientation="Horizontal"
-                                                        Visibility="{Binding IsAnalyzing, Converter={StaticResource BoolToVis}}">
-                                                <ContentControl Style="{StaticResource Spinner}" Width="12" Height="12" />
-                                                <TextBlock Text="Analyzing…" Margin="6,0,0,0" FontSize="12.5" />
-                                            </StackPanel>
-                                        </Grid>
-                                    </Button>
-                                </Grid>
-                            </Border>
-
-                            <!-- Media info card -->
-                            <Border Padding="12"
-                                    Margin="0,10,0,0"
-                                    Background="{DynamicResource CardBackground}"
-                                    BorderBrush="{DynamicResource CardBorder}"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Visibility="{Binding HasItems, Converter={StaticResource BoolToVis}}">
-                                <StackPanel>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <Border Width="140" Height="79"
-                                                CornerRadius="5"
-                                                Background="{DynamicResource ThumbnailBg}"
-                                                ClipToBounds="True">
-                                            <Image Source="{Binding SourceThumbnail}" Stretch="UniformToFill" />
-                                        </Border>
-
-                                        <StackPanel Grid.Column="1" Margin="12,0,12,0" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding SourceTitle}"
-                                                       FontSize="13"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="{DynamicResource TextPrimary}"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       Visibility="{Binding IsPlaylist, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                                            <TextBlock FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,3,0,0"
-                                                       Visibility="{Binding IsPlaylist, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                                                <Run Text="{Binding SourceChannel, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{Binding SourceDuration, Mode=OneWay}" />
-                                            </TextBlock>
-                                            <TextBlock Text="{Binding PlaylistTitle}"
-                                                       FontSize="13"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="{DynamicResource TextPrimary}"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       Visibility="{Binding IsPlaylist, Converter={StaticResource BoolToVis}}" />
-                                            <TextBlock Text="{Binding PlaylistCount, StringFormat=Playlist · {0} videos}"
-                                                       FontSize="11"
-                                                       Foreground="{DynamicResource TextSecondary}"
-                                                       Margin="0,3,0,0"
-                                                       Visibility="{Binding IsPlaylist, Converter={StaticResource BoolToVis}}" />
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                                            <RadioButton GroupName="Mode" Content="Video" IsChecked="{Binding IsVideoMode, Mode=TwoWay}" />
-                                            <RadioButton GroupName="Mode" Content="Audio" IsChecked="{Binding IsAudioMode, Mode=TwoWay}" Margin="10,0,0,0" />
-                                        </StackPanel>
-                                    </Grid>
-
-                                    <!-- Options row -->
-                                    <Grid Margin="0,12,0,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <StackPanel>
-                                            <TextBlock Text="QUALITY" Style="{StaticResource SectionHeader}" Margin="0,0,0,5" />
-                                            <Grid>
-                                                <ComboBox Width="145"
-                                                          ItemsSource="{Binding VideoQualityOptions}"
-                                                          SelectedItem="{Binding SelectedVideoQuality, Mode=TwoWay}"
-                                                          Visibility="{Binding IsVideoMode, Converter={StaticResource BoolToVis}}" />
-                                                <ComboBox Width="145"
-                                                          ItemsSource="{Binding AudioQualityOptions}"
-                                                          SelectedItem="{Binding SelectedAudioQuality, Mode=TwoWay}"
-                                                          Visibility="{Binding IsAudioMode, Converter={StaticResource BoolToVis}}" />
-                                            </Grid>
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                                            <TextBlock Text="FORMAT" Style="{StaticResource SectionHeader}" Margin="0,0,0,5" />
-                                            <Grid>
-                                                <ComboBox Width="105"
-                                                          ItemsSource="{Binding ContainerOptions}"
-                                                          SelectedItem="{Binding SelectedContainer, Mode=TwoWay}"
-                                                          Visibility="{Binding IsVideoMode, Converter={StaticResource BoolToVis}}" />
-                                                <ComboBox Width="105"
-                                                          ItemsSource="{Binding AudioFormats}"
-                                                          SelectedItem="{Binding SelectedAudioFormat, Mode=TwoWay}"
-                                                          Visibility="{Binding IsAudioMode, Converter={StaticResource BoolToVis}}" />
-                                            </Grid>
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Column="2" Margin="10,0,0,0">
-                                            <TextBlock Text="CONNECTIONS" Style="{StaticResource SectionHeader}" Margin="0,0,0,5" />
-                                            <ComboBox Width="68"
-                                                      ItemsSource="{Binding ConnectionsOptions}"
-                                                      SelectedItem="{Binding Connections, Mode=TwoWay}"
-                                                      ToolTip="Parallel fragment connections" />
-                                        </StackPanel>
-
-                                        <CheckBox Grid.Column="3"
-                                                  Content="Subtitles"
-                                                  Margin="12,22,0,0"
-                                                  IsChecked="{Binding IncludeSubtitles, Mode=TwoWay}"
-                                                  Visibility="{Binding IsVideoMode, Converter={StaticResource BoolToVis}}"
-                                                  ToolTip="Embed English subtitles" />
-
-                                        <StackPanel Grid.Column="4" Margin="12,0,0,0">
-                                            <TextBlock Text="SAVE TO" Style="{StaticResource SectionHeader}" Margin="0,0,0,5" />
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-                                                <TextBox Padding="8,4"
-                                                         FontSize="12"
-                                                         Text="{Binding DestinationFolder, UpdateSourceTrigger=PropertyChanged}" />
-                                                <Button Grid.Column="1"
-                                                        Style="{StaticResource IconButton}"
-                                                        Margin="5,0,0,0"
-                                                        Command="{Binding BrowseDestinationCommand}"
-                                                        ToolTip="Choose folder">
-                                                    <TextBlock Text="&#xE8B7;" FontFamily="{DynamicResource IconFont}" FontSize="11.5" />
-                                                </Button>
-                                                <Button Grid.Column="2"
-                                                        Style="{StaticResource IconButton}"
-                                                        Margin="3,0,0,0"
-                                                        Command="{Binding OpenDestinationCommand}"
-                                                        ToolTip="Open folder">
-                                                    <TextBlock Text="&#xE838;" FontFamily="{DynamicResource IconFont}" FontSize="11.5" />
-                                                </Button>
-                                            </Grid>
-                                        </StackPanel>
-                                    </Grid>
-                                </StackPanel>
-                            </Border>
-
-                            <!-- Playlist card -->
-                            <Border Margin="0,10,0,0" Padding="12"
-                                    Background="{DynamicResource CardBackground}"
-                                    BorderBrush="{DynamicResource CardBorder}"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Visibility="{Binding IsPlaylist, Converter={StaticResource BoolToVis}}">
-                                <StackPanel>
-                                    <Grid>
-                                        <TextBlock Text="Videos" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" FontSize="12" />
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <Button Style="{StaticResource TextButton}" Content="Select all" Command="{Binding SelectAllCommand}" />
-                                            <Button Style="{StaticResource TextButton}" Content="None" Command="{Binding SelectNoneCommand}" Margin="4,0,0,0" />
-                                            <TextBox Width="76"
-                                                     Padding="7,4"
-                                                     FontSize="11.5"
-                                                     Margin="8,0,0,0"
-                                                     Tag="1–20"
-                                                     Text="{Binding RangeInput, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Button Style="{StaticResource TextButton}" Content="Apply" Command="{Binding ApplyRangeCommand}" Margin="6,0,0,0" />
-                                        </StackPanel>
-                                    </Grid>
-
-                                    <TextBlock Text="{Binding Error}"
-                                               Foreground="{DynamicResource Error}"
-                                               FontSize="11.5"
-                                               Margin="0,7,0,0"
-                                               TextWrapping="Wrap"
-                                               Visibility="{Binding Error, Converter={StaticResource IsNullOrEmptyToVisibilityConverter}}" />
-
-                                    <Border Background="{DynamicResource InputBackground}"
-                                            BorderBrush="{DynamicResource InputBorder}"
-                                            BorderThickness="1"
-                                            CornerRadius="6"
-                                            Margin="0,7,0,0"
-                                            Padding="3"
-                                            MaxHeight="200">
-                                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
-                                                      Style="{StaticResource SlimScrollViewer}">
-                                            <ItemsControl ItemsSource="{Binding Items}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Border Padding="7,5" Background="Transparent">
-                                                            <Grid>
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="Auto" />
-                                                                    <ColumnDefinition Width="*" />
-                                                                    <ColumnDefinition Width="Auto" />
-                                                                </Grid.ColumnDefinitions>
-                                                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center" />
-                                                                <TextBlock Grid.Column="1"
-                                                                           Text="{Binding Title}"
-                                                                           Margin="9,0,9,0"
-                                                                           FontSize="12"
-                                                                           Foreground="{DynamicResource TextPrimary}"
-                                                                           TextTrimming="CharacterEllipsis"
-                                                                           VerticalAlignment="Center" />
-                                                                <TextBlock Grid.Column="2"
-                                                                           Text="{Binding DurationText}"
-                                                                           FontSize="10.5"
-                                                                           Foreground="{DynamicResource TextTertiary}"
-                                                                           VerticalAlignment="Center" />
-                                                            </Grid>
-                                                        </Border>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </ScrollViewer>
-                                    </Border>
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
-                    </ScrollViewer>
-                </DockPanel>
-            </Border>
-
         </Grid>
 
         <!-- ======================= Status bar ======================= -->
-        <Border Grid.Row="3"
+        <Border Grid.Row="1"
                 Background="{DynamicResource StatusBarBackground}"
                 BorderBrush="{DynamicResource CardBorder}"
                 BorderThickness="0,1,0,0"
@@ -987,7 +831,13 @@
                            Foreground="{DynamicResource TextTertiary}"
                            VerticalAlignment="Center" />
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Ellipse Width="7" Height="7" VerticalAlignment="Center" Margin="0,0,6,0">
+                    <Button Style="{StaticResource HeaderIconButton}"
+                            Width="24" Height="24"
+                            Command="{Binding OpenDestinationCommand}"
+                            ToolTip="Open downloads folder">
+                        <TextBlock Text="&#xE8B7;" FontFamily="{StaticResource IconFont}" FontSize="11" />
+                    </Button>
+                    <Ellipse Width="7" Height="7" VerticalAlignment="Center" Margin="8,0,6,0">
                         <Ellipse.Style>
                             <Style TargetType="Ellipse">
                                 <Setter Property="Fill" Value="{DynamicResource ProgressTrack}" />
