@@ -48,11 +48,19 @@ public static class CookieVault
     {
         try
         {
+            // Remove any stale copy first — a leftover from a killed run would
+            // otherwise be handed to yt-dlp in a partially written state.
+            try { File.Delete(TempPath); } catch { }
+
             if (!TryLoad(out var text))
                 return null;
+
             Directory.CreateDirectory(SettingsStore.DataFolder);
+
+            // NOTE: never mark this file Hidden (or read-only). yt-dlp rewrites
+            // its cookie jar to this exact path when it exits, and Windows
+            // blocks opening hidden files for writing (PermissionError 13).
             File.WriteAllText(TempPath, text, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
-            try { File.SetAttributes(TempPath, FileAttributes.Hidden); } catch { }
             return TempPath;
         }
         catch

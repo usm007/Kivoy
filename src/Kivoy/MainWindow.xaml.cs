@@ -1,6 +1,8 @@
-using System.IO;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using Kivoy.Services;
 using Kivoy.ViewModels;
 
@@ -14,7 +16,7 @@ public partial class MainWindow : Window
         DataContext = new MainViewModel();
         AppShell.ApplyWindowShell(this, ThemeManager.Current == "Dark");
 
-        // Restore persisted size, but never below the new design minimums.
+        // Restore persisted size, but never below the design minimums.
         Width = Math.Max(SettingsStore.Instance.WindowWidth, MinWidth);
         Height = Math.Max(SettingsStore.Instance.WindowHeight, MinHeight);
 
@@ -25,60 +27,6 @@ public partial class MainWindow : Window
             s.WindowHeight = Height;
             SettingsStore.Save();
         };
-
-        Loaded += (_, _) =>
-        {
-            UpdateStorageCard();
-            if (DataContext is MainViewModel vm)
-                vm.PropertyChanged += OnViewModelPropertyChanged;
-        };
-    }
-
-    private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(MainViewModel.DestinationFolder))
-            UpdateStorageCard();
-    }
-
-    private void UpdateStorageCard()
-    {
-        try
-        {
-            if (DataContext is not MainViewModel vm || string.IsNullOrWhiteSpace(vm.DestinationFolder))
-            {
-                StorageCard.Visibility = Visibility.Collapsed;
-                return;
-            }
-
-            var root = Path.GetPathRoot(Path.GetFullPath(vm.DestinationFolder));
-            if (string.IsNullOrEmpty(root))
-            {
-                StorageCard.Visibility = Visibility.Collapsed;
-                return;
-            }
-
-            var drive = new DriveInfo(root);
-            if (!drive.IsReady || drive.TotalSize == 0)
-            {
-                StorageCard.Visibility = Visibility.Collapsed;
-                return;
-            }
-
-            var free = drive.AvailableFreeSpace;
-            var total = drive.TotalSize;
-            var usedPercent = (total - free) * 100.0 / total;
-
-            double FormatGb(long bytes) => bytes / 1024d / 1024d / 1024d;
-
-            StorageFreeText.Text =
-                $"{FormatGb(free):0.#} GB free of {FormatGb(total):0} GB";
-            StorageBar.Value = Math.Clamp(usedPercent, 0, 100);
-            StorageCard.Visibility = Visibility.Visible;
-        }
-        catch
-        {
-            StorageCard.Visibility = Visibility.Collapsed;
-        }
     }
 
     private void NewDownload_Click(object sender, RoutedEventArgs e)
@@ -108,7 +56,7 @@ public partial class MainWindow : Window
         {
             if (source is FrameworkElement { DataContext: T dc })
                 return dc;
-            source = System.Windows.Media.VisualTreeHelper.GetParent(source);
+            source = VisualTreeHelper.GetParent(source);
         }
         return null;
     }
@@ -125,5 +73,20 @@ public partial class MainWindow : Window
         var item = FindDataContext<HistoryItemViewModel>(e.OriginalSource as DependencyObject);
         if (item is not null)
             Play(item);
+    }
+
+    // "⋮" button on cards — opens the row's context menu at the pointer.
+    private void CardMore_Click(object sender, RoutedEventArgs e)
+    {
+        DependencyObject? current = sender as DependencyObject;
+        while (current is not null && current is not ListViewItem)
+            current = VisualTreeHelper.GetParent(current);
+
+        if (current is ListViewItem lvi && lvi.ContextMenu is { } menu)
+        {
+            menu.PlacementTarget = lvi;
+            menu.Placement = PlacementMode.Bottom;
+            menu.IsOpen = true;
+        }
     }
 }

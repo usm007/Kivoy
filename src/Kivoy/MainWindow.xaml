@@ -4,8 +4,8 @@
         xmlns:conv="clr-namespace:Kivoy.Converters"
         Title="Kivoy"
         Icon="pack://application:,,,/Assets/app_icon.png"
-        Width="1100" Height="700"
-        MinWidth="900" MinHeight="600"
+        Width="1000" Height="650"
+        MinWidth="860" MinHeight="560"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource WindowBackground}"
         FontFamily="{DynamicResource AppFont}"
@@ -24,13 +24,13 @@
     <Grid>
         <Grid.RowDefinitions>
             <!-- Header -->
-            <RowDefinition Height="68" />
+            <RowDefinition Height="56" />
             <!-- Notifications -->
             <RowDefinition Height="Auto" />
             <!-- Content -->
             <RowDefinition Height="*" />
             <!-- Status bar -->
-            <RowDefinition Height="36" />
+            <RowDefinition Height="32" />
         </Grid.RowDefinitions>
 
         <!-- ======================= Header ======================= -->
@@ -38,92 +38,43 @@
                 Background="{DynamicResource CardBackground}"
                 BorderBrush="{DynamicResource CardBorder}"
                 BorderThickness="0,0,0,1">
-            <Grid Margin="20,0">
+            <Grid Margin="16,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Identity -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                     <Image Source="pack://application:,,,/Assets/app_icon.png"
-                           Width="32" Height="32"
-                           Margin="0,0,12,0"
+                           Width="26" Height="26"
+                           Margin="0,0,10,0"
                            VerticalAlignment="Center"
                            RenderOptions.BitmapScalingMode="HighQuality" />
                     <TextBlock Text="Kivoy"
-                               FontSize="19"
-                               FontWeight="Bold"
+                               FontSize="16.5"
+                               FontWeight="SemiBold"
                                Foreground="{DynamicResource TextPrimary}"
                                VerticalAlignment="Center" />
                 </StackPanel>
 
-                <!-- Quick link input -->
-                <Border Grid.Column="1"
-                        MaxWidth="420"
-                        Height="40"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Background="{DynamicResource InputBackground}"
-                        BorderBrush="{DynamicResource InputBorder}"
-                        BorderThickness="1"
-                        CornerRadius="10">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                                   Text="&#xE721;"
-                                   FontFamily="{StaticResource IconFont}"
-                                   FontSize="13"
-                                   Foreground="{DynamicResource TextTertiary}"
-                                   VerticalAlignment="Center"
-                                   Margin="14,0,0,0" />
-                        <TextBox x:Name="QuickUrlBox"
-                                 Grid.Column="1"
-                                 Background="Transparent"
-                                 BorderBrush="Transparent"
-                                 BorderThickness="0"
-                                 Padding="10,0,4,0"
-                                 FontSize="13"
-                                 VerticalContentAlignment="Center"
-                                 ToolTip="Paste a YouTube link and press Enter"
-                                 Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}">
-                            <TextBox.InputBindings>
-                                <KeyBinding Key="Enter" Command="{Binding AnalyzeCommand}" />
-                            </TextBox.InputBindings>
-                        </TextBox>
-                        <Button Grid.Column="2"
-                                Style="{StaticResource IconButton}"
-                                Margin="0,0,4,0"
-                                Command="{Binding PasteUrlCommand}"
-                                ToolTip="Paste from clipboard">
-                            <TextBlock Text="&#xE77F;" FontFamily="{StaticResource IconFont}" FontSize="13" />
-                        </Button>
-                    </Grid>
-                </Border>
-
-                <!-- Global actions -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
 
                     <Button Style="{StaticResource PrimaryButton}"
-                            Height="40"
-                            Padding="18,0"
+                            Height="36"
+                            Padding="15,0"
                             Margin="0,0,10,0"
                             Click="NewDownload_Click"
                             ToolTip="Add a new download">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="+"
                                        FontFamily="{StaticResource AppFont}"
-                                       FontSize="17"
+                                       FontSize="16"
                                        FontWeight="Bold"
                                        VerticalAlignment="Center"
-                                       LineHeight="18"
+                                       LineHeight="17"
                                        Margin="0,1,7,0" />
-                            <TextBlock Text="New Download" FontSize="13.5" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            <TextBlock Text="New Download" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
 
@@ -164,35 +115,35 @@
         <StackPanel Grid.Row="1">
 
             <!-- Error banner -->
-            <Border Margin="20,10,20,0"
+            <Border Margin="16,8,16,0"
                     Background="{DynamicResource NotificationBackground}"
                     BorderBrush="{DynamicResource Error}"
                     BorderThickness="1"
-                    CornerRadius="10"
-                    Padding="14,9"
+                    CornerRadius="8"
+                    Padding="12,7"
                     Visibility="{Binding Error, Converter={StaticResource IsNullOrEmptyToVisibilityConverter}}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="&#xE7BA;"
                                FontFamily="{StaticResource IconFont}"
-                               FontSize="13"
+                               FontSize="12"
                                Foreground="{DynamicResource Error}"
                                VerticalAlignment="Center" />
                     <TextBlock Text="{Binding Error}"
                                Foreground="{DynamicResource Error}"
-                               FontSize="13"
+                               FontSize="12.5"
                                TextWrapping="Wrap"
                                VerticalAlignment="Center"
-                               Margin="10,0,0,0" />
+                               Margin="9,0,0,0" />
                 </StackPanel>
             </Border>
 
             <!-- Engine setup banner -->
-            <Border Margin="20,10,20,0"
+            <Border Margin="16,8,16,0"
                     Background="{DynamicResource NotificationBackground}"
                     BorderBrush="{DynamicResource CardBorder}"
                     BorderThickness="1"
-                    CornerRadius="10"
-                    Padding="14,10"
+                    CornerRadius="8"
+                    Padding="12,8"
                     Visibility="{Binding EngineBusy, Converter={StaticResource BoolToVis}}">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -200,14 +151,14 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <ContentControl Style="{StaticResource Spinner}" Width="16" Height="16" VerticalAlignment="Center" />
-                    <StackPanel Grid.Column="1" Margin="12,0,12,0" VerticalAlignment="Center">
+                    <ContentControl Style="{StaticResource Spinner}" Width="14" Height="14" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" Margin="11,0,11,0" VerticalAlignment="Center">
                         <TextBlock Text="{Binding EngineStatusText}"
-                                   FontSize="12.5"
+                                   FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{DynamicResource TextPrimary}" />
-                        <ProgressBar Height="5"
-                                     Margin="0,7,0,0"
+                        <ProgressBar Height="4"
+                                     Margin="0,6,0,0"
                                      Value="{Binding EnginePercent, Mode=OneWay}"
                                      Maximum="100" />
                     </StackPanel>
@@ -224,7 +175,7 @@
         <!-- ======================= Content ======================= -->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240" />
+                <ColumnDefinition Width="200" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
@@ -233,122 +184,79 @@
                     BorderBrush="{DynamicResource CardBorder}"
                     BorderThickness="0,0,1,0"
                     Background="{DynamicResource SidebarBackground}">
-                <DockPanel>
+                <DockPanel Margin="0,10,0,10">
 
-                    <!-- Storage card (bottom) -->
-                    <Border x:Name="StorageCard"
-                            DockPanel.Dock="Bottom"
-                            Margin="12,0,12,12"
-                            Padding="14,12"
-                            Background="{DynamicResource CardBackground}"
-                            BorderBrush="{DynamicResource CardBorder}"
-                            BorderThickness="1"
-                            CornerRadius="10"
-                            Visibility="Collapsed">
-                        <StackPanel>
-                            <TextBlock Text="STORAGE" Style="{StaticResource SidebarSectionHeader}" Margin="0,0,0,6" />
-                            <TextBlock x:Name="StorageFreeText"
-                                       FontSize="13"
-                                       FontWeight="SemiBold"
-                                       Foreground="{DynamicResource TextPrimary}" />
-                            <ProgressBar x:Name="StorageBar"
-                                         Height="5"
-                                         Margin="0,8,0,0"
-                                         Minimum="0"
-                                         Maximum="100" />
+                    <!-- Single existing action, kept quiet -->
+                    <Button DockPanel.Dock="Bottom"
+                            Style="{StaticResource NavItemButton}"
+                            Command="{Binding OpenDestinationCommand}"
+                            ToolTip="Open the downloads folder">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE8B7;"
+                                       FontFamily="{StaticResource IconFont}"
+                                       FontSize="14"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="Open folder" Margin="10,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
-                    </Border>
+                    </Button>
 
-                    <!-- Tools (bottom) -->
-                    <StackPanel DockPanel.Dock="Bottom" Margin="0,4,0,0">
-                        <TextBlock Text="TOOLS" Style="{StaticResource SidebarSectionHeader}" />
-                        <Button Style="{StaticResource NavItemButton}"
-                                Command="{Binding OpenDestinationCommand}"
-                                ToolTip="Open the downloads folder">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="&#xE8B7;"
-                                           FontFamily="{StaticResource IconFont}"
-                                           FontSize="15"
-                                           VerticalAlignment="Center" />
-                                <TextBlock Text="Open Folder" Margin="12,0,0,0" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                        <Button Style="{StaticResource NavItemButton}"
-                                Command="{Binding OpenSettingsCommand}"
-                                ToolTip="Open settings">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="&#xE713;"
-                                           FontFamily="{StaticResource IconFont}"
-                                           FontSize="15"
-                                           VerticalAlignment="Center" />
-                                <TextBlock Text="Settings" Margin="12,0,0,0" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
-
-                    <!-- Navigation -->
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <StackPanel Margin="0,16,0,8">
-                            <TextBlock Text="DOWNLOADS" Style="{StaticResource SidebarSectionHeader}" />
-                            <ListBox Style="{StaticResource Sidebar}"
-                                     SelectedValuePath="Tag"
-                                     SelectedValue="{Binding SelectedView, Mode=TwoWay}">
-                                <ListBoxItem Tag="All">
-                                    <DockPanel>
-                                        <Border Style="{StaticResource CountBadge}" DockPanel.Dock="Right">
-                                            <TextBlock Text="{Binding ActiveJobs.Count}"
-                                                       FontSize="11"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="{DynamicResource Accent}" />
-                                        </Border>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="&#xE80F;"
-                                                       FontFamily="{StaticResource IconFont}"
-                                                       FontSize="15"
-                                                       VerticalAlignment="Center" />
-                                            <TextBlock Text="All Downloads" Margin="12,0,0,0" VerticalAlignment="Center" />
-                                        </StackPanel>
-                                    </DockPanel>
-                                </ListBoxItem>
-                                <ListBoxItem Tag="Active">
-                                    <DockPanel>
-                                        <Border Style="{StaticResource CountBadge}" DockPanel.Dock="Right"
-                                                Visibility="{Binding HasActive, Converter={StaticResource BoolToVis}}">
-                                            <TextBlock Text="{Binding ActiveCount}"
-                                                       FontSize="11"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="{DynamicResource Accent}" />
-                                        </Border>
-                                        <StackPanel Orientation="Horizontal">
-                                            <Control Style="{StaticResource DownloadGlyph}"
-                                                     Width="15"
-                                                     Height="15"
-                                                     VerticalAlignment="Center" />
-                                            <TextBlock Text="Active" Margin="12,0,0,0" VerticalAlignment="Center" />
-                                        </StackPanel>
-                                    </DockPanel>
-                                </ListBoxItem>
-                                <ListBoxItem Tag="Completed">
-                                    <DockPanel>
-                                        <Border Style="{StaticResource CountBadge}" DockPanel.Dock="Right"
-                                                Visibility="{Binding HasHistory, Converter={StaticResource BoolToVis}}">
-                                            <TextBlock Text="{Binding HistoryCount}"
-                                                       FontSize="11"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="{DynamicResource Accent}" />
-                                        </Border>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="&#xE73E;"
-                                                       FontFamily="{StaticResource IconFont}"
-                                                       FontSize="15"
-                                                       VerticalAlignment="Center" />
-                                            <TextBlock Text="Completed" Margin="12,0,0,0" VerticalAlignment="Center" />
-                                        </StackPanel>
-                                    </DockPanel>
-                                </ListBoxItem>
-                            </ListBox>
-                        </StackPanel>
-                    </ScrollViewer>
+                    <ListBox Style="{StaticResource Sidebar}"
+                             SelectedValuePath="Tag"
+                             SelectedValue="{Binding SelectedView, Mode=TwoWay}">
+                        <ListBoxItem Tag="All">
+                            <DockPanel>
+                                <Border Style="{StaticResource CountBadge}" DockPanel.Dock="Right">
+                                    <TextBlock Text="{Binding ActiveJobs.Count}"
+                                               FontSize="10.5"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource Accent}" />
+                                </Border>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE80F;"
+                                               FontFamily="{StaticResource IconFont}"
+                                               FontSize="13.5"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock Text="All Downloads" Margin="10,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </DockPanel>
+                        </ListBoxItem>
+                        <ListBoxItem Tag="Active">
+                            <DockPanel>
+                                <Border Style="{StaticResource CountBadge}" DockPanel.Dock="Right"
+                                        Visibility="{Binding HasActive, Converter={StaticResource BoolToVis}}">
+                                    <TextBlock Text="{Binding ActiveCount}"
+                                               FontSize="10.5"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource Accent}" />
+                                </Border>
+                                <StackPanel Orientation="Horizontal">
+                                    <Control Style="{StaticResource DownloadGlyph}"
+                                             Width="13"
+                                             Height="13"
+                                             VerticalAlignment="Center" />
+                                    <TextBlock Text="Active" Margin="10,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </DockPanel>
+                        </ListBoxItem>
+                        <ListBoxItem Tag="Completed">
+                            <DockPanel>
+                                <Border Style="{StaticResource CountBadge}" DockPanel.Dock="Right"
+                                        Visibility="{Binding HasHistory, Converter={StaticResource BoolToVis}}">
+                                    <TextBlock Text="{Binding HistoryCount}"
+                                               FontSize="10.5"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource Accent}" />
+                                </Border>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE73E;"
+                                               FontFamily="{StaticResource IconFont}"
+                                               FontSize="13.5"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock Text="Completed" Margin="10,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </DockPanel>
+                        </ListBoxItem>
+                    </ListBox>
                 </DockPanel>
             </Border>
 
@@ -361,15 +269,12 @@
                 </Grid.RowDefinitions>
 
                 <!-- Page header -->
-                <Grid Grid.Row="0" Margin="24,18,24,4">
-                    <StackPanel>
-                        <TextBlock Text="Active Downloads" Style="{StaticResource PageTitle}" />
-                        <TextBlock Text="{Binding StatusBarText}" Style="{StaticResource PageSubtitle}" Margin="0,3,0,0" />
-                    </StackPanel>
-                    <Border Style="{StaticResource CountBadge}" HorizontalAlignment="Right" VerticalAlignment="Top"
+                <Grid Grid.Row="0" Margin="20,12,20,2">
+                    <TextBlock Text="Active Downloads" Style="{StaticResource PageTitle}" VerticalAlignment="Center" />
+                    <Border Style="{StaticResource CountBadge}" HorizontalAlignment="Right" VerticalAlignment="Center"
                             Visibility="{Binding HasActive, Converter={StaticResource BoolToVis}}">
-                        <TextBlock Text="{Binding ActiveCount}"
-                                   FontSize="12"
+                        <TextBlock Text="{Binding ActiveCount, StringFormat='{}{0} active'}"
+                                   FontSize="11"
                                    FontWeight="SemiBold"
                                    Foreground="{DynamicResource Accent}" />
                     </Border>
@@ -377,7 +282,7 @@
 
                 <!-- Download cards -->
                 <ListView Grid.Row="1"
-                          Margin="24,8,24,16"
+                          Margin="20,8,20,12"
                           ItemsSource="{Binding ViewJobs}"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                           Background="Transparent"
@@ -390,22 +295,21 @@
                     </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid>
+                            <Grid MinHeight="86">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="176" />
+                                    <ColumnDefinition Width="150" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Thumbnail -->
-                                <Grid Grid.Column="0" Width="176" Height="99" VerticalAlignment="Center">
-                                    <Border CornerRadius="8" Background="{DynamicResource ThumbnailBg}" ClipToBounds="True">
+                                <!-- Thumbnail 16:9 -->
+                                <Grid Grid.Column="0" Width="150" Height="84" VerticalAlignment="Center">
+                                    <Border CornerRadius="6" Background="{DynamicResource ThumbnailBg}" ClipToBounds="True">
                                         <Image Source="{Binding Thumbnail}"
                                                Stretch="UniformToFill"
                                                RenderOptions.BitmapScalingMode="HighQuality" />
                                     </Border>
-                                    <!-- Placeholder when thumbnail missing -->
-                                    <Border CornerRadius="8" Background="{DynamicResource ThumbnailBg}">
+                                    <Border CornerRadius="6" Background="{DynamicResource ThumbnailBg}">
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="Visibility" Value="Visible" />
@@ -417,29 +321,28 @@
                                             </Style>
                                         </Border.Style>
                                         <Control Style="{StaticResource DownloadGlyph}"
-                                                 Width="26" Height="26"
+                                                 Width="22" Height="22"
                                                  HorizontalAlignment="Center" VerticalAlignment="Center"
                                                  Foreground="{DynamicResource GlyphSecondary}" />
                                     </Border>
                                 </Grid>
 
                                 <!-- Info -->
-                                <StackPanel Grid.Column="1" Margin="16,0,14,0" VerticalAlignment="Center">
+                                <StackPanel Grid.Column="1" Margin="12,0,12,0" VerticalAlignment="Center">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="{Binding Title}"
-                                                   FontSize="14.5"
+                                                   FontSize="13.5"
                                                    FontWeight="SemiBold"
                                                    Foreground="{DynamicResource TextPrimary}"
                                                    TextTrimming="CharacterEllipsis"
                                                    VerticalAlignment="Center" />
-                                        <!-- Percent while running, state otherwise -->
                                         <TextBlock Grid.Column="1"
                                                    Text="{Binding Percent, StringFormat={}{0:0}%}"
-                                                   FontSize="12"
+                                                   FontSize="11.5"
                                                    FontWeight="SemiBold"
                                                    Foreground="{DynamicResource Accent}"
                                                    VerticalAlignment="Center"
@@ -447,37 +350,34 @@
                                                    Visibility="{Binding IsProgressVisible, Converter={StaticResource BoolToVis}}" />
                                         <TextBlock Grid.Column="1"
                                                    Text="{Binding StateText}"
-                                                   FontSize="11.5"
+                                                   FontSize="11"
                                                    Foreground="{DynamicResource TextSecondary}"
                                                    VerticalAlignment="Center"
                                                    Margin="10,0,0,0"
                                                    Visibility="{Binding IsProgressVisible, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                     </Grid>
 
-                                    <!-- Metadata -->
-                                    <TextBlock FontSize="11.5" Foreground="{DynamicResource TextTertiary}" Margin="0,3,0,0"
+                                    <TextBlock FontSize="11" Foreground="{DynamicResource TextTertiary}" Margin="0,2,0,0"
                                                TextTrimming="CharacterEllipsis">
                                         <Run Text="{Binding Item.Channel, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{Binding Options.Mode, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{Binding Options.Quality.Label, Mode=OneWay}" />
                                     </TextBlock>
 
-                                    <!-- Progress bar -->
-                                    <ProgressBar Height="5"
-                                                 Margin="0,10,0,0"
+                                    <ProgressBar Height="4"
+                                                 Margin="0,7,0,0"
                                                  Value="{Binding Percent}"
                                                  Maximum="100"
                                                  IsIndeterminate="{Binding IsIndeterminate}"
                                                  Visibility="{Binding IsProgressVisible, Converter={StaticResource BoolToVis}}" />
 
-                                    <!-- Stats row -->
-                                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                                        <TextBlock Text="{Binding SizeText}" FontSize="11.5" Foreground="{DynamicResource TextSecondary}" />
-                                        <TextBlock Text="  ·  " FontSize="11.5" Foreground="{DynamicResource TextTertiary}"
+                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                        <TextBlock Text="{Binding SizeText}" FontSize="11" Foreground="{DynamicResource TextSecondary}" />
+                                        <TextBlock Text="  ·  " FontSize="11" Foreground="{DynamicResource TextTertiary}"
                                                    Visibility="{Binding SpeedText, Converter={StaticResource IsNullOrEmptyToVisibilityConverter}}" />
-                                        <TextBlock Text="{Binding SpeedText}" FontSize="11.5" Foreground="{DynamicResource TextSecondary}" />
-                                        <TextBlock Text="  ·  " FontSize="11.5" Foreground="{DynamicResource TextTertiary}"
+                                        <TextBlock Text="{Binding SpeedText}" FontSize="11" Foreground="{DynamicResource TextSecondary}" />
+                                        <TextBlock Text="  ·  " FontSize="11" Foreground="{DynamicResource TextTertiary}"
                                                    Visibility="{Binding EtaText, Converter={StaticResource IsNullOrEmptyToVisibilityConverter}}" />
-                                        <TextBlock Text="{Binding EtaText}" FontSize="11.5" Foreground="{DynamicResource TextSecondary}" />
-                                        <TextBlock Text="{Binding StatusText}" FontSize="11.5" Foreground="{DynamicResource TextSecondary}"
+                                        <TextBlock Text="{Binding EtaText}" FontSize="11" Foreground="{DynamicResource TextSecondary}" />
+                                        <TextBlock Text="{Binding StatusText}" FontSize="11" Foreground="{DynamicResource TextSecondary}"
                                                    TextTrimming="CharacterEllipsis"
                                                    Visibility="{Binding IsProgressVisible, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                     </StackPanel>
@@ -516,15 +416,9 @@
                                         <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" />
                                     </Button>
                                     <Button Style="{StaticResource CardActionButton}"
-                                            Command="{Binding OpenFolderCommand}"
-                                            ToolTip="Open folder">
-                                        <TextBlock Text="&#xE838;" FontFamily="{StaticResource IconFont}" />
-                                    </Button>
-                                    <Button Style="{StaticResource CardActionButton}"
-                                            Command="{Binding RemoveCommand}"
-                                            ToolTip="Remove"
-                                            Visibility="{Binding IsDone, Converter={StaticResource BoolToVis}}">
-                                        <TextBlock Text="&#xE74D;" FontFamily="{StaticResource IconFont}" />
+                                            Click="CardMore_Click"
+                                            ToolTip="More actions">
+                                        <TextBlock Text="&#xE712;" FontFamily="{StaticResource IconFont}" />
                                     </Button>
                                 </StackPanel>
                             </Grid>
@@ -532,46 +426,24 @@
                     </ListView.ItemTemplate>
                 </ListView>
 
-                <!-- Empty state -->
+                <!-- Empty state — small and quiet -->
                 <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"
                             Visibility="{Binding HasActive, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                    <Border Width="72" Height="72" CornerRadius="36"
-                            Background="{DynamicResource ThumbnailBg}"
-                            HorizontalAlignment="Center">
-                        <Control Style="{StaticResource DownloadGlyph}"
-                                 Width="34" Height="34"
-                                 HorizontalAlignment="Center" VerticalAlignment="Center"
-                                 Foreground="{DynamicResource GlyphSecondary}" />
-                    </Border>
+                    <Control Style="{StaticResource DownloadGlyph}"
+                             Width="28" Height="28"
+                             HorizontalAlignment="Center"
+                             Foreground="{DynamicResource GlyphSecondary}" />
                     <TextBlock Text="No downloads yet"
-                               FontSize="18"
+                               FontSize="14"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource TextPrimary}"
                                HorizontalAlignment="Center"
-                               Margin="0,20,0,0" />
-                    <TextBlock Text="Start by adding a download or paste a link above."
-                               FontSize="13"
+                               Margin="0,10,0,0" />
+                    <TextBlock Text="Use New Download to add your first link."
+                               FontSize="11.5"
                                Foreground="{DynamicResource TextTertiary}"
                                HorizontalAlignment="Center"
-                               Margin="0,6,0,0" />
-                    <Button Style="{StaticResource PrimaryButton}"
-                            Height="40"
-                            Padding="18,0"
-                            Margin="0,22,0,0"
-                            HorizontalAlignment="Center"
-                            Click="NewDownload_Click"
-                            ToolTip="Add a new download">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="+"
-                                       FontFamily="{StaticResource AppFont}"
-                                       FontSize="17"
-                                       FontWeight="Bold"
-                                       VerticalAlignment="Center"
-                                       LineHeight="18"
-                                       Margin="0,1,7,0" />
-                            <TextBlock Text="New Download" FontSize="13.5" FontWeight="SemiBold" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
+                               Margin="0,3,0,0" />
                 </StackPanel>
             </Grid>
 
@@ -584,24 +456,20 @@
                 </Grid.RowDefinitions>
 
                 <!-- Page header + search -->
-                <Grid Grid.Row="0" Margin="24,18,24,4">
+                <Grid Grid.Row="0" Margin="20,12,20,2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <StackPanel>
-                        <TextBlock Text="Completed Downloads" Style="{StaticResource PageTitle}" />
-                        <TextBlock Text="{Binding HistoryCount, StringFormat='{}{0} items in history'}"
-                                   Style="{StaticResource PageSubtitle}" Margin="0,3,0,0" />
-                    </StackPanel>
+                    <TextBlock Text="Completed Downloads" Style="{StaticResource PageTitle}" VerticalAlignment="Center" />
                     <Border Grid.Column="1"
-                            Width="260"
-                            Height="36"
+                            Width="230"
+                            Height="30"
                             VerticalAlignment="Center"
                             Background="{DynamicResource InputBackground}"
                             BorderBrush="{DynamicResource InputBorder}"
                             BorderThickness="1"
-                            CornerRadius="10">
+                            CornerRadius="7">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -609,16 +477,16 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="&#xE721;"
                                        FontFamily="{StaticResource IconFont}"
-                                       FontSize="12"
+                                       FontSize="11"
                                        Foreground="{DynamicResource TextTertiary}"
                                        VerticalAlignment="Center"
-                                       Margin="12,0,0,0" />
+                                       Margin="10,0,0,0" />
                             <TextBox Grid.Column="1"
                                      Background="Transparent"
                                      BorderBrush="Transparent"
                                      BorderThickness="0"
-                                     Padding="8,0"
-                                     FontSize="12.5"
+                                     Padding="7,0"
+                                     FontSize="12"
                                      VerticalContentAlignment="Center"
                                      Text="{Binding HistorySearch, UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
@@ -627,7 +495,7 @@
 
                 <!-- Compact completed rows -->
                 <ListView Grid.Row="1"
-                          Margin="24,8,24,16"
+                          Margin="20,8,20,12"
                           ItemsSource="{Binding HistoryItems}"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                           Background="Transparent"
@@ -648,44 +516,40 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Done marker -->
-                                <Border Width="28" Height="28" CornerRadius="14"
+                                <Border Width="22" Height="22" CornerRadius="11"
                                         Background="{DynamicResource AccentSubtle}"
                                         VerticalAlignment="Center">
                                     <TextBlock Text="&#xE73E;"
                                                FontFamily="{StaticResource IconFont}"
-                                               FontSize="12"
+                                               FontSize="10"
                                                Foreground="{DynamicResource Success}"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center" />
                                 </Border>
 
-                                <!-- Small thumbnail -->
-                                <Border Grid.Column="1" Width="100" Height="56" CornerRadius="6"
+                                <Border Grid.Column="1" Width="76" Height="43" CornerRadius="5"
                                         Background="{DynamicResource ThumbnailBg}"
                                         ClipToBounds="True"
-                                        Margin="12,0,0,0"
+                                        Margin="10,0,0,0"
                                         VerticalAlignment="Center">
                                     <Image Source="{Binding Thumbnail}"
                                            Stretch="UniformToFill"
                                            RenderOptions.BitmapScalingMode="LowQuality" />
                                 </Border>
 
-                                <!-- Title + meta -->
-                                <StackPanel Grid.Column="2" Margin="12,0,12,0" VerticalAlignment="Center">
+                                <StackPanel Grid.Column="2" Margin="10,0,10,0" VerticalAlignment="Center">
                                     <TextBlock Text="{Binding Title}"
-                                               FontSize="13.5"
+                                               FontSize="12.5"
                                                FontWeight="SemiBold"
                                                Foreground="{DynamicResource TextPrimary}"
                                                TextTrimming="CharacterEllipsis" />
                                     <TextBlock Text="{Binding MetaText}"
-                                               FontSize="11.5"
+                                               FontSize="10.5"
                                                Foreground="{DynamicResource TextTertiary}"
                                                TextTrimming="CharacterEllipsis"
-                                               Margin="0,2,0,0" />
+                                               Margin="0,1,0,0" />
                                 </StackPanel>
 
-                                <!-- Actions -->
                                 <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
                                     <Button Style="{StaticResource CardActionButton}"
                                             Command="{Binding PlayCommand}"
@@ -699,14 +563,9 @@
                                         <TextBlock Text="&#xE838;" FontFamily="{StaticResource IconFont}" />
                                     </Button>
                                     <Button Style="{StaticResource CardActionButton}"
-                                            Command="{Binding RedownloadCommand}"
-                                            ToolTip="Download again">
-                                        <Control Style="{StaticResource DownloadGlyph}" Width="13" Height="13" />
-                                    </Button>
-                                    <Button Style="{StaticResource CardActionButton}"
-                                            Command="{Binding RemoveCommand}"
-                                            ToolTip="Remove from history">
-                                        <TextBlock Text="&#xE74D;" FontFamily="{StaticResource IconFont}" />
+                                            Click="CardMore_Click"
+                                            ToolTip="More actions">
+                                        <TextBlock Text="&#xE712;" FontFamily="{StaticResource IconFont}" />
                                     </Button>
                                 </StackPanel>
                             </Grid>
@@ -717,27 +576,22 @@
                 <!-- Empty history -->
                 <StackPanel Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"
                             Visibility="{Binding HasHistory, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                    <Border Width="72" Height="72" CornerRadius="36"
-                            Background="{DynamicResource ThumbnailBg}"
-                            HorizontalAlignment="Center">
-                        <TextBlock Text="&#xE81C;"
-                                   FontFamily="{StaticResource IconFont}"
-                                   FontSize="30"
-                                   Foreground="{DynamicResource GlyphSecondary}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
-                    </Border>
+                    <TextBlock Text="&#xE81C;"
+                               FontFamily="{StaticResource IconFont}"
+                               FontSize="24"
+                               Foreground="{DynamicResource GlyphSecondary}"
+                               HorizontalAlignment="Center" />
                     <TextBlock Text="Nothing here yet"
-                               FontSize="18"
+                               FontSize="14"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource TextPrimary}"
                                HorizontalAlignment="Center"
-                               Margin="0,20,0,0" />
+                               Margin="0,10,0,0" />
                     <TextBlock Text="Completed downloads will appear here."
-                               FontSize="13"
+                               FontSize="11.5"
                                Foreground="{DynamicResource TextTertiary}"
                                HorizontalAlignment="Center"
-                               Margin="0,6,0,0" />
+                               Margin="0,3,0,0" />
                 </StackPanel>
             </Grid>
         </Grid>
@@ -747,22 +601,14 @@
                 Background="{DynamicResource StatusBarBackground}"
                 BorderBrush="{DynamicResource CardBorder}"
                 BorderThickness="0,1,0,0"
-                Padding="20,0">
+                Padding="16,0">
             <Grid>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="Kivoy"
-                               FontSize="11.5"
-                               FontWeight="SemiBold"
-                               Foreground="{DynamicResource TextTertiary}"
-                               VerticalAlignment="Center" />
-                    <TextBlock Text="   ·   " FontSize="11.5" Foreground="{DynamicResource TextDisabled}" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding StatusBarText}"
-                               FontSize="11.5"
-                               Foreground="{DynamicResource TextTertiary}"
-                               VerticalAlignment="Center" />
-                </StackPanel>
+                <TextBlock Text="{Binding StatusBarText}"
+                           FontSize="11"
+                           Foreground="{DynamicResource TextTertiary}"
+                           VerticalAlignment="Center" />
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Ellipse Width="8" Height="8" VerticalAlignment="Center" Margin="0,0,7,0">
+                    <Ellipse Width="7" Height="7" VerticalAlignment="Center" Margin="0,0,6,0">
                         <Ellipse.Style>
                             <Style TargetType="Ellipse">
                                 <Setter Property="Fill" Value="{DynamicResource ProgressTrack}" />
@@ -781,7 +627,7 @@
                         </Ellipse.Style>
                     </Ellipse>
                     <TextBlock Text="{Binding EngineStatusText}"
-                               FontSize="11.5"
+                               FontSize="11"
                                Foreground="{DynamicResource TextTertiary}"
                                VerticalAlignment="Center" />
                 </StackPanel>

@@ -219,16 +219,16 @@
         <Setter Property="Cursor" Value="Hand" />
     </Style>
 
-    <!-- Header action button: 36x36 icon-only, subtle hover -->
+    <!-- Header action button: compact icon-only, subtle hover -->
     <Style x:Key="HeaderIconButton" TargetType="Button">
-        <Setter Property="Width" Value="36" />
-        <Setter Property="Height" Value="36" />
+        <Setter Property="Width" Value="32" />
+        <Setter Property="Height" Value="32" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource GlyphColor}" />
         <Setter Property="FontFamily" Value="{StaticResource IconFont}" />
-        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontSize" Value="13.5" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Focusable" Value="False" />
         <Setter Property="Template">
@@ -236,7 +236,7 @@
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Bd"
                             Background="{TemplateBinding Background}"
-                            CornerRadius="9"
+                            CornerRadius="8"
                             Width="{TemplateBinding Width}"
                             Height="{TemplateBinding Height}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -803,11 +803,11 @@
 
     <Style x:Key="SidebarItem" TargetType="ListBoxItem">
         <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
-        <Setter Property="FontSize" Value="13.5" />
+        <Setter Property="FontSize" Value="13" />
         <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
-        <Setter Property="Padding" Value="12,0" />
-        <Setter Property="Height" Value="40" />
-        <Setter Property="Margin" Value="8,2" />
+        <Setter Property="Padding" Value="10,0" />
+        <Setter Property="Height" Value="34" />
+        <Setter Property="Margin" Value="6,1" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -816,7 +816,7 @@
                 <ControlTemplate TargetType="ListBoxItem">
                     <Border x:Name="Bd"
                             Background="Transparent"
-                            CornerRadius="9"
+                            CornerRadius="7"
                             Padding="{TemplateBinding Padding}"
                             Height="{TemplateBinding Height}">
                         <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -1033,12 +1033,12 @@
 
     <!-- Sidebar tool button (same geometry as nav items, command-driven) -->
     <Style x:Key="NavItemButton" TargetType="Button">
-        <Setter Property="Height" Value="40" />
-        <Setter Property="Margin" Value="8,2" />
-        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="Height" Value="34" />
+        <Setter Property="Margin" Value="6,1" />
+        <Setter Property="Padding" Value="10,0" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
-        <Setter Property="FontSize" Value="13.5" />
+        <Setter Property="FontSize" Value="13" />
         <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -1049,7 +1049,7 @@
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Bd"
                             Background="{TemplateBinding Background}"
-                            CornerRadius="9"
+                            CornerRadius="7"
                             Padding="{TemplateBinding Padding}"
                             Height="{TemplateBinding Height}">
                         <ContentPresenter VerticalAlignment="Center" />
@@ -1071,14 +1071,14 @@
     <!-- Count badge pill -->
     <Style x:Key="CountBadge" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource AccentSubtle}" />
-        <Setter Property="CornerRadius" Value="10" />
-        <Setter Property="Padding" Value="7,2" />
+        <Setter Property="CornerRadius" Value="9" />
+        <Setter Property="Padding" Value="6,1" />
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
     <!-- Page header text -->
     <Style x:Key="PageTitle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontSize" Value="15.5" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
         <Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
@@ -1086,7 +1086,7 @@
     </Style>
 
     <Style x:Key="PageSubtitle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontSize" Value="11.5" />
         <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
         <Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
         <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
@@ -1122,8 +1122,8 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{DynamicResource CardBorder}"
                             BorderThickness="1"
-                            CornerRadius="12"
-                            Padding="16">
+                            CornerRadius="10"
+                            Padding="12">
                         <ContentPresenter />
                     </Border>
                     <ControlTemplate.Triggers>
@@ -1147,7 +1147,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Padding" Value="0" />
-        <Setter Property="Margin" Value="0,0,0,8" />
+        <Setter Property="Margin" Value="0,0,0,6" />
         <Setter Property="ContextMenu">
             <Setter.Value>
                 <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
@@ -1167,8 +1167,8 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{DynamicResource CardBorder}"
                             BorderThickness="1"
-                            CornerRadius="10"
-                            Padding="12,10">
+                            CornerRadius="8"
+                            Padding="10,7">
                         <ContentPresenter />
                     </Border>
                     <ControlTemplate.Triggers>
@@ -1187,12 +1187,12 @@
 
     <!-- Compact icon action button used inside cards -->
     <Style x:Key="CardActionButton" TargetType="Button">
-        <Setter Property="Width" Value="32" />
-        <Setter Property="Height" Value="32" />
+        <Setter Property="Width" Value="28" />
+        <Setter Property="Height" Value="28" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource GlyphColor}" />
         <Setter Property="FontFamily" Value="{StaticResource IconFont}" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="12" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Focusable" Value="False" />
         <Setter Property="Template">
