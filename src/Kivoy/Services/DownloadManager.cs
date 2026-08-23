@@ -29,6 +29,8 @@ public sealed class DownloadManager
 
     public event EventHandler<DownloadJob>? JobCompleted;
 
+    public event EventHandler? LoginRequiredDetected;
+
     public void Enqueue(IEnumerable<(MediaItem Item, string? SubFolder)> entries, DownloadOptions opts)
     {
         foreach (var (item, subFolder) in entries)
@@ -147,12 +149,23 @@ public sealed class DownloadManager
             else
             {
                 job.State = JobState.Error;
-                job.ErrorText = error ?? "Download failed";
+                if (error is not null && YouTubeLoginHelper.IsLoginRequired(error))
+                {
+                    job.ErrorText = "YouTube sign-in required";
+                    LoginRequiredDetected?.Invoke(this, EventArgs.Empty);
+                }
+                else
+                {
+                    job.ErrorText = error ?? "Download failed";
+                }
             }
 
             TryStartNext();
         }
     }
+
+    private static readonly HashSet<string> SubtitleExtensions = new(StringComparer.OrdinalIgnoreCase)
+    { ".vtt", ".srt", ".ass", ".ssa", ".ttml", ".srvf", ".srv1", ".srv2", ".srv3", ".lrc", ".sami" };
 
     private static string? FindOutputFile(DownloadJob job)
     {
@@ -166,7 +179,9 @@ public sealed class DownloadManager
                 return expected;
 
             var actual = Directory.GetFiles(job.FolderPath, $"* [{job.Item.Id}].*")
-                .FirstOrDefault(f => !f.EndsWith(".part", StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefault(f =>
+                    !f.EndsWith(".part", StringComparison.OrdinalIgnoreCase) &&
+                    !SubtitleExtensions.Contains(Path.GetExtension(f)));
             return actual;
         }
         catch
@@ -295,18 +310,6 @@ public sealed class DownloadManager
         yield return "download:__DL__%(progress.downloaded_bytes)s|%(progress.total_bytes)s|%(progress.speed)s|%(progress.eta)s|%(progress._percent_str)s";
         yield return "--progress-template";
         yield return "postprocess:__PP__%(postprocessor._status)s|%(postprocessor.name)s";
-
-        if (SettingsStore.Instance.CookiesFile is { } cf && File.Exists(cf))
-        {
-            yield return "--cookies";
-            yield return cf;
-        }
-
-        if (!string.IsNullOrWhiteSpace(SettingsStore.Instance.Proxy))
-        {
-            yield return "--proxy";
-            yield return SettingsStore.Instance.Proxy;
-        }
 
         yield return job.Item.Url;
 

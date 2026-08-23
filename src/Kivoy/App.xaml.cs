@@ -34,6 +34,14 @@ public partial class App : Application
         Microsoft.Win32.SystemEvents.UserPreferenceChanged += OnSystemThemeChanged;
 
         var window = new MainWindow();
+
+        try
+        {
+            var iconUri = new Uri("pack://application:,,,/Assets/app_icon.png", UriKind.Absolute);
+            window.Icon = new System.Windows.Media.Imaging.BitmapImage(iconUri);
+        }
+        catch { }
+
         MainWindow = window;
         window.Show();
     }

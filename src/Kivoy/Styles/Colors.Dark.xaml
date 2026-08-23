@@ -1,61 +1,70 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Classic IDM dark palette (subdued, same idiom) -->
+    <!-- ===================================================== -->
+    <!-- Fine-Tuned Dark Palette — Obsidian + Electric Indigo  -->
+    <!-- ===================================================== -->
 
     <!-- Surfaces -->
-    <Color x:Key="WindowBackgroundColor">#1E1E1E</Color>
-    <Color x:Key="CardBackgroundColor">#262626</Color>
-    <Color x:Key="InputBackgroundColor">#2E2E2E</Color>
-    <Color x:Key="HoverBackgroundColor">#333333</Color>
-    <Color x:Key="PressedBackgroundColor">#222222</Color>
-    <Color x:Key="SelectedRowColor">#2D4A63</Color>
-    <Color x:Key="RowHoverColor">#2A3B4A</Color>
-    <Color x:Key="OverlayBackgroundColor">#CC1E1E1E</Color>
-    <Color x:Key="DangerHoverColor">#33E57373</Color>
-    <Color x:Key="ControlBackgroundColor">#333333</Color>
-    <Color x:Key="ControlHoverColor">#3C3C3C</Color>
-    <Color x:Key="ControlPressedColor">#292929</Color>
-    <Color x:Key="StatusBarBackgroundColor">#2A2A2A</Color>
-    <Color x:Key="MenuHoverColor">#2D4A63</Color>
-    <Color x:Key="SidebarSelectedColor">#2D4A63</Color>
-    <Color x:Key="ListHeaderBackgroundColor">#2A2A2A</Color>
-    <Color x:Key="TitlebarBackgroundColor">#1E1E1E</Color>
+    <Color x:Key="WindowBackgroundColor">#0C0E14</Color>
+    <Color x:Key="CardBackgroundColor">#131722</Color>
+    <Color x:Key="SidebarBackgroundColor">#0F121C</Color>
+    <Color x:Key="InputBackgroundColor">#1A1F2E</Color>
+    <Color x:Key="HoverBackgroundColor">#1D2436</Color>
+    <Color x:Key="PressedBackgroundColor">#161B29</Color>
+    <Color x:Key="SelectedRowColor">#1F2942</Color>
+    <Color x:Key="RowHoverColor">#182033</Color>
+    <Color x:Key="OverlayBackgroundColor">#CC0C0E14</Color>
+    <Color x:Key="DangerHoverColor">#33EF4444</Color>
+    <Color x:Key="ControlBackgroundColor">#1A1F2E</Color>
+    <Color x:Key="ControlHoverColor">#222A3E</Color>
+    <Color x:Key="ControlPressedColor">#161B29</Color>
+    <Color x:Key="StatusBarBackgroundColor">#0A0C12</Color>
+    <Color x:Key="MenuHoverColor">#1D2436</Color>
+    <Color x:Key="SidebarSelectedColor">#1D2436</Color>
+    <Color x:Key="ListHeaderBackgroundColor">#0F121C</Color>
+    <Color x:Key="TitlebarBackgroundColor">#0C0E14</Color>
+    <Color x:Key="HeaderBackgroundColor">#131722</Color>
+    <Color x:Key="NotificationBackgroundColor">#192033</Color>
 
     <!-- Borders -->
-    <Color x:Key="CardBorderColor">#3F3F3F</Color>
-    <Color x:Key="InputBorderColor">#4D4D4D</Color>
-    <Color x:Key="DividerColor">#333333</Color>
-    <Color x:Key="GridLineColor">#343434</Color>
+    <Color x:Key="CardBorderColor">#22293D</Color>
+    <Color x:Key="InputBorderColor">#2B344D</Color>
+    <Color x:Key="DividerColor">#1D2436</Color>
+    <Color x:Key="GridLineColor">#182030</Color>
 
     <!-- Text -->
-    <Color x:Key="TextPrimaryColor">#E6E6E6</Color>
-    <Color x:Key="TextSecondaryColor">#A8A8A8</Color>
-    <Color x:Key="TextTertiaryColor">#7A7A7A</Color>
-    <Color x:Key="TextDisabledColor">#555555</Color>
-    <Color x:Key="BlueLinkColor">#6CB3FF</Color>
+    <Color x:Key="TextPrimaryColor">#F8FAFC</Color>
+    <Color x:Key="TextSecondaryColor">#94A3B8</Color>
+    <Color x:Key="TextTertiaryColor">#64748B</Color>
+    <Color x:Key="TextDisabledColor">#334155</Color>
+    <Color x:Key="BlueLinkColor">#818CF8</Color>
 
-    <!-- Accent -->
-    <Color x:Key="AccentColor">#E57373</Color>
-    <Color x:Key="AccentHoverColor">#EF8A8A</Color>
-    <Color x:Key="AccentPressedColor">#D05050</Color>
-    <Color x:Key="AccentGradientTopColor">#EF8A8A</Color>
-    <Color x:Key="AccentGradientBottomColor">#E57373</Color>
+    <!-- Accent — Electric Indigo -->
+    <Color x:Key="AccentColor">#6366F1</Color>
+    <Color x:Key="AccentHoverColor">#7578F5</Color>
+    <Color x:Key="AccentPressedColor">#4F46E5</Color>
+    <Color x:Key="AccentGradientTopColor">#7578F5</Color>
+    <Color x:Key="AccentGradientBottomColor">#6366F1</Color>
+    <Color x:Key="AccentSubtleColor">#242654</Color>
 
     <!-- Status -->
-    <Color x:Key="SuccessColor">#57B25B</Color>
-    <Color x:Key="WarningColor">#D8A23C</Color>
-    <Color x:Key="ErrorColor">#E57373</Color>
+    <Color x:Key="SuccessColor">#22C55E</Color>
+    <Color x:Key="WarningColor">#F59E0B</Color>
+    <Color x:Key="ErrorColor">#EF4444</Color>
 
     <!-- Misc -->
-    <Color x:Key="ProgressTrackColor">#3A3A3A</Color>
-    <Color x:Key="ThumbnailBgColor">#2E2E2E</Color>
-    <Color x:Key="PillBackgroundColor">#CC2A2A2A</Color>
-    <Color x:Key="ScrollbarColor">#4A4A4A</Color>
-    <Color x:Key="ScrollbarHoverColor">#5A5A5A</Color>
+    <Color x:Key="ProgressTrackColor">#1A1F2E</Color>
+    <Color x:Key="ThumbnailBgColor">#1A1F2E</Color>
+    <Color x:Key="PillBackgroundColor">#1E2538</Color>
+    <Color x:Key="ScrollbarColor">#2B344D</Color>
+    <Color x:Key="ScrollbarHoverColor">#3F4D70</Color>
+    <Color x:Key="SidebarAccentBarColor">#6366F1</Color>
 
+    <!-- Brushes -->
     <SolidColorBrush x:Key="WindowBackground" Color="{StaticResource WindowBackgroundColor}" />
     <SolidColorBrush x:Key="CardBackground" Color="{StaticResource CardBackgroundColor}" />
+    <SolidColorBrush x:Key="SidebarBackground" Color="{StaticResource SidebarBackgroundColor}" />
     <SolidColorBrush x:Key="InputBackground" Color="{StaticResource InputBackgroundColor}" />
     <SolidColorBrush x:Key="HoverBackground" Color="{StaticResource HoverBackgroundColor}" />
     <SolidColorBrush x:Key="PressedBackground" Color="{StaticResource PressedBackgroundColor}" />
@@ -72,6 +81,8 @@
     <SolidColorBrush x:Key="SidebarSelected" Color="{StaticResource SidebarSelectedColor}" />
     <SolidColorBrush x:Key="ListHeaderBackground" Color="{StaticResource ListHeaderBackgroundColor}" />
     <SolidColorBrush x:Key="TitlebarBackground" Color="{StaticResource TitlebarBackgroundColor}" />
+    <SolidColorBrush x:Key="HeaderBackground" Color="{StaticResource HeaderBackgroundColor}" />
+    <SolidColorBrush x:Key="NotificationBackground" Color="{StaticResource NotificationBackgroundColor}" />
 
     <SolidColorBrush x:Key="CardBorder" Color="{StaticResource CardBorderColor}" />
     <SolidColorBrush x:Key="InputBorder" Color="{StaticResource InputBorderColor}" />
@@ -87,8 +98,14 @@
     <SolidColorBrush x:Key="Accent" Color="{StaticResource AccentColor}" />
     <SolidColorBrush x:Key="AccentHover" Color="{StaticResource AccentHoverColor}" />
     <SolidColorBrush x:Key="AccentPressed" Color="{StaticResource AccentPressedColor}" />
+    <SolidColorBrush x:Key="AccentSubtle" Color="{StaticResource AccentSubtleColor}" />
 
-    <LinearGradientBrush x:Key="AccentGradient" StartPoint="0,0" EndPoint="0,1">
+    <LinearGradientBrush x:Key="AccentGradient" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="{StaticResource AccentGradientTopColor}" Offset="0" />
+        <GradientStop Color="#818CF8" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="AccentGradientV" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Color="{StaticResource AccentGradientTopColor}" Offset="0" />
         <GradientStop Color="{StaticResource AccentGradientBottomColor}" Offset="1" />
     </LinearGradientBrush>
@@ -102,6 +119,7 @@
     <SolidColorBrush x:Key="PillBackground" Color="{StaticResource PillBackgroundColor}" />
     <SolidColorBrush x:Key="ScrollbarBrush" Color="{StaticResource ScrollbarColor}" />
     <SolidColorBrush x:Key="ScrollbarHoverBrush" Color="{StaticResource ScrollbarHoverColor}" />
+    <SolidColorBrush x:Key="SidebarAccentBar" Color="{StaticResource SidebarAccentBarColor}" />
 
     <SolidColorBrush x:Key="GlyphColor" Color="{StaticResource TextSecondaryColor}" />
     <SolidColorBrush x:Key="GlyphSecondary" Color="{StaticResource TextTertiaryColor}" />

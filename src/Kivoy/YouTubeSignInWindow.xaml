@@ -3,12 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         Title="Kivoy — Sign in with YouTube"
-        Width="900" Height="640"
-        MinWidth="760" MinHeight="520"
+        Width="700" Height="520"
+        MinWidth="600" MinHeight="440"
+        MaxWidth="900" MaxHeight="700"
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource WindowBackground}"
         FontFamily="{DynamicResource AppFont}"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="ClearType"
         UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
         ShowInTaskbar="False">
 
     <Grid>
@@ -19,7 +23,7 @@
         </Grid.RowDefinitions>
 
         <!-- Hint -->
-        <Border Grid.Row="0" Padding="14,10"
+        <Border Grid.Row="0" Padding="12,8"
                 Background="{DynamicResource CardBackground}"
                 BorderBrush="{DynamicResource CardBorder}"
                 BorderThickness="0,0,0,1">
@@ -37,7 +41,7 @@
         </Border>
 
         <!-- Browser -->
-        <Border Grid.Row="1" Margin="12,12,12,8"
+        <Border Grid.Row="1" Margin="10,10,10,6"
                 Background="{DynamicResource CardBackground}"
                 BorderBrush="{DynamicResource CardBorder}"
                 BorderThickness="1">
@@ -49,7 +53,7 @@
                 Background="{DynamicResource StatusBarBackground}"
                 BorderBrush="{DynamicResource CardBorder}"
                 BorderThickness="0,1,0,0"
-                Padding="14,10">
+                Padding="12,8">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />

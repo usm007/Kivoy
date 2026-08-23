@@ -10,7 +10,7 @@ public partial class AddDownloadWindow : Window
     public AddDownloadWindow()
     {
         InitializeComponent();
-        AppShell.ApplyWindowIcon(this);
+        AppShell.ApplyWindowShell(this, ThemeManager.Current == "Dark");
         UrlBox.KeyDown += OnUrlBoxKeyDown;
         Loaded += OnLoaded;
         Closed += OnClosed;

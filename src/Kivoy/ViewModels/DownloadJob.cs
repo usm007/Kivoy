@@ -35,7 +35,11 @@ public partial class DownloadJob : ObservableObject
         }, () => OutputExists);
 
         _ = ThumbnailLoader.GetAsync(item.ThumbnailUrl)
-            .ContinueWith(t => Thumbnail = t.Result, TaskScheduler.FromCurrentSynchronizationContext());
+            .ContinueWith(t =>
+            {
+                if (t.Status == TaskStatus.RanToCompletion)
+                    Thumbnail = t.Result;
+            }, TaskScheduler.FromCurrentSynchronizationContext());
     }
 
     public MediaItem Item { get; }
@@ -177,6 +181,9 @@ public partial class DownloadJob : ObservableObject
 
     public void ApplyProgress(JobProgress p)
     {
+        if (State is JobState.Paused or JobState.Cancelled)
+            return;
+
         if (p.Processing)
         {
             State = JobState.Processing;

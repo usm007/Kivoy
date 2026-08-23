@@ -10,7 +10,10 @@
         ResizeMode="NoResize"
         SizeToContent="WidthAndHeight"
         FontFamily="{DynamicResource AppFont}"
-        UseLayoutRounding="True">
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="ClearType"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True">
     <Border x:Name="Root"
             Background="{DynamicResource CardBackground}"
             BorderBrush="{DynamicResource CardBorder}"
@@ -22,7 +25,7 @@
         <Border.Effect>
             <DropShadowEffect BlurRadius="24" ShadowDepth="0" Opacity="0.4" Color="Black" />
         </Border.Effect>
-        <StackPanel Orientation="Horizontal" Width="330">
+        <StackPanel Orientation="Horizontal" Width="280">
             <Border Width="30" Height="30" CornerRadius="15" Background="{DynamicResource Success}" VerticalAlignment="Top">
                 <TextBlock Text="&#xE73E;"
                            FontFamily="{DynamicResource IconFont}"

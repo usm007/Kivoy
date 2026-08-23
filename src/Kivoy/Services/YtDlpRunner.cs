@@ -27,6 +27,18 @@ public static class YtDlpRunner
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
 
+        if (SettingsStore.Instance.CookiesFile is { } cf && File.Exists(cf))
+        {
+            psi.ArgumentList.Add("--cookies");
+            psi.ArgumentList.Add(cf);
+        }
+
+        if (!string.IsNullOrWhiteSpace(SettingsStore.Instance.Proxy))
+        {
+            psi.ArgumentList.Add("--proxy");
+            psi.ArgumentList.Add(SettingsStore.Instance.Proxy);
+        }
+
         if (File.Exists(EngineManager.QuickJsPath))
         {
             psi.ArgumentList.Add("--js-runtimes");

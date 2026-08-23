@@ -38,7 +38,11 @@ public partial class HistoryItemViewModel : ObservableObject
         });
 
         _ = ThumbnailLoader.GetAsync(entry.ThumbnailUrl)
-            .ContinueWith(t => Thumbnail = t.Result, TaskScheduler.FromCurrentSynchronizationContext());
+            .ContinueWith(t =>
+            {
+                if (t.Status == TaskStatus.RanToCompletion)
+                    Thumbnail = t.Result;
+            }, TaskScheduler.FromCurrentSynchronizationContext());
     }
 
     public Action<HistoryEntry>? Removed { get; set; }

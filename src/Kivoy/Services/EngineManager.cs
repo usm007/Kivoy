@@ -27,6 +27,9 @@ public static class EngineManager
     /// <summary>Folder bundled with the app (Program Files) that can seed the engines on first run.</summary>
     public static string SeedsDir => Path.Combine(AppContext.BaseDirectory, "engines");
 
+    /// <summary>True when this is a FULL install — the engine binaries are bundled with the app and require no download.</summary>
+    public static bool IsFullInstall => File.Exists(Path.Combine(SeedsDir, ".full")) || File.Exists(Path.Combine(AppContext.BaseDirectory, ".full"));
+
     public static string YtDlpPath => FindInPath("yt-dlp.exe") ?? Path.Combine(BinDir, "yt-dlp.exe");
     public static string FfmpegPath => FindInPath("ffmpeg.exe") ?? Path.Combine(BinDir, "ffmpeg.exe");
     public static string FfprobePath => FindInPath("ffprobe.exe") ?? Path.Combine(BinDir, "ffprobe.exe");
@@ -241,11 +244,11 @@ public static class EngineManager
         double span,
         CancellationToken ct)
     {
-        const string primaryUrl = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip";
-        const string fallbackUrl = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip";
+        const string primaryUrl = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip";
+        const string fallbackUrl = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip";
         var tmp = Path.Combine(BinDir, "ffmpeg.zip");
 
-        progress?.Report(new EngineProgress("Downloading FFmpeg (media muxer)…", start));
+        progress?.Report(new EngineProgress("Downloading FFmpeg (lightweight essentials build)…", start));
 
         try
         {

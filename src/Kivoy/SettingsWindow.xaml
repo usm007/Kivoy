@@ -3,12 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:conv="clr-namespace:Kivoy.Converters"
         Title="Kivoy — Settings"
-        Width="600" Height="680"
-        MinWidth="560" MinHeight="560"
+        Width="500" Height="540"
+        MinWidth="460" MinHeight="440"
+        MaxWidth="600" MaxHeight="640"
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource WindowBackground}"
         FontFamily="{DynamicResource AppFont}"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="ClearType"
         UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
         ShowInTaskbar="False">
 
     <Window.Resources>
@@ -24,16 +28,18 @@
         </Grid.RowDefinitions>
 
         <!-- Body -->
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Style="{StaticResource SlimScrollViewer}">
             <StackPanel Margin="14,14,14,6">
 
+
                 <!-- General -->
-                <Border Margin="0,0,0,10" Padding="16"
+                <Border Margin="0,0,0,10" Padding="14"
                         Background="{DynamicResource CardBackground}"
                         BorderBrush="{DynamicResource CardBorder}"
-                        BorderThickness="1">
+                        BorderThickness="1"
+                        CornerRadius="6">
                     <StackPanel>
-                        <TextBlock Text="General" Style="{StaticResource SectionHeader}" Margin="0,0,0,12" />
+                        <TextBlock Text="General" Style="{StaticResource SectionHeader}" Margin="0,0,0,14" FontSize="13" Foreground="{DynamicResource TextPrimary}" />
 
                         <TextBlock Text="Default download folder" Style="{StaticResource CaptionText}" Margin="0,0,0,4" />
                         <Grid>
@@ -59,12 +65,13 @@
                 </Border>
 
                 <!-- Downloads -->
-                <Border Margin="0,0,0,10" Padding="16"
+                <Border Margin="0,0,0,10" Padding="14"
                         Background="{DynamicResource CardBackground}"
                         BorderBrush="{DynamicResource CardBorder}"
-                        BorderThickness="1">
+                        BorderThickness="1"
+                        CornerRadius="6">
                     <StackPanel>
-                        <TextBlock Text="Downloads" Style="{StaticResource SectionHeader}" Margin="0,0,0,12" />
+                        <TextBlock Text="Downloads" Style="{StaticResource SectionHeader}" Margin="0,0,0,14" FontSize="13" Foreground="{DynamicResource TextPrimary}" />
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -128,30 +135,32 @@
                 </Border>
 
                 <!-- Appearance -->
-                <Border Margin="0,0,0,10" Padding="16"
+                <Border Margin="0,0,0,10" Padding="14"
                         Background="{DynamicResource CardBackground}"
                         BorderBrush="{DynamicResource CardBorder}"
-                        BorderThickness="1">
+                        BorderThickness="1"
+                        CornerRadius="6">
                     <StackPanel>
-                        <TextBlock Text="Appearance" Style="{StaticResource SectionHeader}" Margin="0,0,0,12" />
+                        <TextBlock Text="Appearance" Style="{StaticResource SectionHeader}" Margin="0,0,0,14" FontSize="13" Foreground="{DynamicResource TextPrimary}" />
                         <TextBlock Text="Theme" Style="{StaticResource CaptionText}" Margin="0,0,0,4" />
-                        <ComboBox Width="220" HorizontalAlignment="Left"
+                        <ComboBox Width="180" HorizontalAlignment="Left"
                                   ItemsSource="{Binding Themes}"
                                   SelectedItem="{Binding Theme, Mode=TwoWay}" />
                     </StackPanel>
                 </Border>
 
                 <!-- YouTube -->
-                <Border Margin="0,0,0,10" Padding="16"
+                <Border Margin="0,0,0,10" Padding="14"
                         Background="{DynamicResource CardBackground}"
                         BorderBrush="{DynamicResource CardBorder}"
-                        BorderThickness="1">
+                        BorderThickness="1"
+                        CornerRadius="6">
                     <StackPanel>
-                        <TextBlock Text="YouTube account" Style="{StaticResource SectionHeader}" Margin="0,0,0,12" />
-                        <TextBlock FontSize="11.5"
+                        <TextBlock Text="YouTube account" Style="{StaticResource SectionHeader}" Margin="0,0,0,14" FontSize="13" Foreground="{DynamicResource TextPrimary}" />
+                        <TextBlock FontSize="12"
                                    Foreground="{DynamicResource TextSecondary}"
                                    TextWrapping="Wrap"
-                                   Margin="0,0,0,10"
+                                   Margin="0,0,0,12"
                                    Text="Sign in with your Google account in an embedded browser. Used for private, age-restricted or bot-checked videos — no browser extensions needed." />
                         <StackPanel Orientation="Horizontal">
                             <Button Style="{StaticResource PrimaryButton}"
@@ -175,12 +184,13 @@
                 </Border>
 
                 <!-- Advanced -->
-                <Border Margin="0,0,0,10" Padding="16"
+                <Border Margin="0,0,0,10" Padding="14"
                         Background="{DynamicResource CardBackground}"
                         BorderBrush="{DynamicResource CardBorder}"
-                        BorderThickness="1">
+                        BorderThickness="1"
+                        CornerRadius="6">
                     <StackPanel>
-                        <TextBlock Text="Advanced" Style="{StaticResource SectionHeader}" Margin="0,0,0,12" />
+                        <TextBlock Text="Advanced" Style="{StaticResource SectionHeader}" Margin="0,0,0,14" FontSize="13" Foreground="{DynamicResource TextPrimary}" />
 
                         <TextBlock Text="Cookies file (for private or age-restricted videos)" Style="{StaticResource CaptionText}" Margin="0,0,0,4" />
                         <Grid>
@@ -241,12 +251,16 @@
         </ScrollViewer>
 
         <!-- Footer -->
-        <Border Grid.Row="1" Background="{DynamicResource StatusBarBackground}" Padding="14,10">
+        <Border Grid.Row="1"
+                Background="{DynamicResource CardBackground}"
+                BorderBrush="{DynamicResource CardBorder}"
+                BorderThickness="0,1,0,0"
+                Padding="14,10">
             <Button Style="{StaticResource PrimaryButton}"
                     HorizontalAlignment="Right"
                     Content="Done"
                     Command="{Binding DoneCommand}"
-                    Padding="28,6" />
+                    Padding="28,8" />
         </Border>
     </Grid>
 </Window>

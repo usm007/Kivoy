@@ -32,6 +32,16 @@ public static class ThemeManager
         });
 
         Current = actual;
+
+        // Apply matching DWM title bar theme to all active windows
+        bool isDark = actual == "Dark";
+        if (Application.Current is not null)
+        {
+            foreach (Window win in Application.Current.Windows)
+            {
+                AppShell.ApplyTitleBarTheme(win, isDark);
+            }
+        }
     }
 
     private static bool SystemIsLight()

@@ -12,7 +12,7 @@ DefaultDirName={autopf}\Kivoy
 DefaultGroupName=Kivoy
 DisableProgramGroupPage=yes
 OutputDir=Setup
-OutputBaseFilename=KivoySetup-{#MyAppVersion}
+OutputBaseFilename=KivoyFullSetup-{#MyAppVersion}
 SetupIconFile=..\src\Kivoy\Assets\app.ico
 Compression=lzma2/max
 SolidCompression=no
@@ -33,6 +33,10 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "..\src\Kivoy\bin\Release\net8.0-windows\win-x64\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "*.pdb"
 Source: "redist\MicrosoftEdgeWebview2Setup.exe"; DestDir: "{tmp}"; Flags: ignoreversion
+; Full install: bundle the engine binaries so no download / confirmation is needed on first launch.
+Source: "engines\*"; DestDir: "{app}\engines"; Flags: ignoreversion
+; Marker that signals the app this is a FULL install (engines bundled).
+Source: "engines\.full"; DestDir: "{app}\engines"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Kivoy"; Filename: "{app}\{#MyAppExeName}"

@@ -31,13 +31,13 @@ public partial class MainViewModel : ObservableObject
         Items.CollectionChanged += OnItemsChanged;
         Manager.ActiveJobs.CollectionChanged += OnActiveJobsChanged;
         Manager.JobCompleted += OnJobCompleted;
+        Manager.LoginRequiredDetected += OnManagerLoginRequired;
 
         ActiveJobs = Manager.ActiveJobs;
         RefreshViewJobs();
         UpdateStatusBar();
 
-        foreach (var e in Manager.History)
-            _allHistory.Add(e);
+        _allHistory = Manager.History;
 
         RefreshHistory();
 
@@ -61,7 +61,7 @@ public partial class MainViewModel : ObservableObject
     public ObservableCollection<string> AudioFormats { get; } = new() { "M4A (recommended)", "MP3", "OPUS", "FLAC", "WAV" };
     public ObservableCollection<int> ConnectionsOptions { get; } = new() { 1, 2, 4, 8, 16 };
 
-    private readonly List<HistoryEntry> _allHistory = new();
+    private readonly List<HistoryEntry> _allHistory;
     public ObservableCollection<HistoryItemViewModel> HistoryItems { get; } = new();
 
     // ---------- URL / analyze ----------
@@ -77,12 +77,16 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private string? error;
 
+    [ObservableProperty]
+    private bool loginRequired;
+
     private bool CanAnalyze => Manager is not null && EngineReady && !IsAnalyzing && !string.IsNullOrWhiteSpace(Url);
 
     [RelayCommand]
     private async Task AnalyzeAsync()
     {
         Error = null;
+        LoginRequired = false;
         var link = Url?.Trim() ?? "";
         if (link.Length == 0)
         {
@@ -129,7 +133,15 @@ public partial class MainViewModel : ObservableObject
         {
             Items.Clear();
             HasItems = false;
-            Error = ex.Message;
+            if (YouTubeLoginHelper.IsLoginRequired(ex.Message))
+            {
+                Error = null;
+                LoginRequired = true;
+            }
+            else
+            {
+                Error = ex.Message;
+            }
         }
         catch (Exception ex)
         {
@@ -150,6 +162,39 @@ public partial class MainViewModel : ObservableObject
     }
 
     public bool IsInDialog { get; set; }
+
+    // ---------- YouTube sign-in ----------
+
+    [RelayCommand]
+    private async Task SignInYouTubeAsync()
+    {
+        var owner = Application.Current.MainWindow;
+        var win = new YouTubeSignInWindow { Owner = owner };
+        win.ShowDialog();
+
+        if (win.DialogResult != true)
+            return;
+
+        LoginRequired = false;
+        _toast.Show("YouTube connected", "Account linked — retrying…");
+
+        if (!string.IsNullOrWhiteSpace(Url) && !IsAnalyzing)
+        {
+            await AnalyzeAsync();
+        }
+    }
+
+    [RelayCommand]
+    private void DismissLoginNotice() => LoginRequired = false;
+
+    private void OnManagerLoginRequired(object? sender, EventArgs e)
+    {
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            LoginRequired = true;
+            _toast.Show("Sign-in required", "Connect your YouTube account to download this video.");
+        });
+    }
 
     [RelayCommand]
     private void PasteUrl()
@@ -487,16 +532,16 @@ public partial class MainViewModel : ObservableObject
             foreach (DownloadJob j in e.NewItems)
                 j.PropertyChanged += OnJobPropertyChanged;
 
-        RecomputeActive();
         RefreshViewJobs();
+        RecomputeActive();
     }
 
     private void OnJobPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(DownloadJob.State))
         {
-            RecomputeActive();
             RefreshViewJobs();
+            RecomputeActive();
         }
     }
 
@@ -699,6 +744,15 @@ public partial class MainViewModel : ObservableObject
             }
             else
             {
+                // A full install bundles the engines and needs no prompt or download.
+                if (!EngineManager.IsFullInstall && !ConfirmEngineInstall())
+                {
+                    EngineFailed = true;
+                    EngineError = "Engine installation was cancelled.";
+                    EngineStatusText = "Engine setup cancelled";
+                    return;
+                }
+
                 var progress = new Progress<EngineProgress>(p =>
                 {
                     EngineStatusText = p.Stage;
@@ -723,29 +777,61 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    private static bool ConfirmEngineInstall()
+    {
+        var owner = System.Windows.Application.Current?.MainWindow;
+        return MessageBox.Show(
+            owner,
+            "Kivoy needs to download its download engine components to work:\n\n" +
+            "  • yt-dlp  (video downloader)\n" +
+            "  • FFmpeg  (media merger / converter)\n" +
+            "  • QuickJS (lightweight JS runtime)\n\n" +
+            "This is a one-time download of about 150 MB and is stored in your local app data.\n\n" +
+            "Download now?",
+            "Install Kivoy Engine",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Question) == MessageBoxResult.Yes;
+    }
+
     private System.Threading.Timer? _engineUpdateTimer;
+
+    private static readonly TimeSpan EngineUpdateInterval = TimeSpan.FromDays(30);
+
+    private static string LastEngineCheckPath => Path.Combine(SettingsStore.DataFolder, "lastEngineCheck.txt");
 
     private void StartPeriodicEngineUpdateCheck()
     {
-        _ = CheckEngineUpdatesAsync();
         _engineUpdateTimer?.Dispose();
         _engineUpdateTimer = new System.Threading.Timer(
             _ => _ = CheckEngineUpdatesAsync(),
             null,
-            TimeSpan.FromHours(6),
-            TimeSpan.FromHours(6));
+            TimeSpan.FromDays(30),
+            TimeSpan.FromDays(30));
+        _ = CheckEngineUpdatesAsync();
     }
 
     private async Task CheckEngineUpdatesAsync()
     {
         try
         {
+            // At most one check per 30 days after install.
+            if (File.Exists(LastEngineCheckPath))
+            {
+                var last = DateTime.MinValue;
+                if (DateTime.TryParse(File.ReadAllText(LastEngineCheckPath).Trim(), out var parsed))
+                    last = parsed;
+                if (DateTime.UtcNow - last < EngineUpdateInterval)
+                    return;
+            }
+
             var progress = new Progress<EngineProgress>(p =>
             {
                 if (!string.IsNullOrWhiteSpace(p.Stage) && !p.Stage.StartsWith("Engine", StringComparison.Ordinal))
                     EngineStatusText = p.Stage;
             });
             var (updated, newVersion) = await Task.Run(() => EngineManager.CheckForUpdatesAsync(progress));
+            RecordEngineCheck();
+
             if (updated && !string.IsNullOrWhiteSpace(newVersion))
             {
                 System.Windows.Application.Current?.Dispatcher?.Invoke(() =>
@@ -756,6 +842,19 @@ public partial class MainViewModel : ObservableObject
         }
         catch
         {
+        }
+    }
+
+    private static void RecordEngineCheck()
+    {
+        try
+        {
+            Directory.CreateDirectory(SettingsStore.DataFolder);
+            File.WriteAllText(LastEngineCheckPath, DateTime.UtcNow.ToString("O"));
+        }
+        catch
+        {
+            // ignore
         }
     }
 

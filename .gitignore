@@ -10,3 +10,15 @@ packages/
 artifacts/
 installer/Setup/
 installer/engines/
+
+# Local tooling & logs
+upx.exe
+upx.zip
+upx-*/
+install.log
+
+# Icon drafts / backups
+src/Kivoy/Assets/app.preview_*.png
+src/Kivoy/Assets/newicon_source.png
+src/Kivoy/Assets/app.*.ico
+3final_icon.png

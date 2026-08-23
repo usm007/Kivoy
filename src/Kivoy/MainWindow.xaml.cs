@@ -11,7 +11,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = new MainViewModel();
-        AppShell.ApplyWindowIcon(this);
+        AppShell.ApplyWindowShell(this, ThemeManager.Current == "Dark");
 
         Width = SettingsStore.Instance.WindowWidth;
         Height = SettingsStore.Instance.WindowHeight;
