@@ -153,15 +153,7 @@ public partial class MainViewModel : ObservableObject
         {
             IsAnalyzing = false;
         }
-
-        if (HasItems && !IsInDialog)
-        {
-            var dialog = new AddDownloadWindow { Owner = Application.Current.MainWindow, DataContext = this };
-            dialog.ShowDialog();
-        }
     }
-
-    public bool IsInDialog { get; set; }
 
     // ---------- YouTube sign-in ----------
 

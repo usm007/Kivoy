@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -27,16 +28,63 @@ public partial class MainWindow : Window
             s.WindowHeight = Height;
             SettingsStore.Save();
         };
+
+        if (DataContext is MainViewModel vm)
+        {
+            vm.PropertyChanged += OnViewModelPropertyChanged;
+            ComposerUrlBox.KeyDown += ComposerUrlBox_KeyDown;
+        }
     }
+
+    // ---------- Add Download composer ----------
+
+    private bool IsComposerOpen => ComposerHost.Visibility == Visibility.Visible;
 
     private void NewDownload_Click(object sender, RoutedEventArgs e)
     {
-        if (DataContext is not MainViewModel vm)
+        ComposerHost.Visibility = Visibility.Visible;
+
+        if (DataContext is MainViewModel { HasItems: false } vm)
+        {
+            // fresh session: put focus in the link box
+            ComposerUrlBox.Focus();
+        }
+    }
+
+    private void ComposerCancel_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel vm)
+            vm.DismissPanelCommand.Execute(null);
+        CloseComposer();
+    }
+
+    private void ComposerUrlBox_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter || DataContext is not MainViewModel vm)
             return;
 
-        var dialog = new AddDownloadWindow { Owner = this, DataContext = vm };
-        dialog.ShowDialog();
+        e.Handled = true;
+        if (vm.AnalyzeCommand.CanExecute(null))
+            vm.AnalyzeCommand.Execute(null);
     }
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MainViewModel.HasItems)
+            && sender is MainViewModel { HasItems: false }
+            && IsComposerOpen)
+        {
+            // download started (or panel dismissed) — back to the list
+            CloseComposer();
+        }
+    }
+
+    private void CloseComposer()
+    {
+        ComposerHost.Visibility = Visibility.Collapsed;
+    }
+
+    // ---------- List interactions ----------
 
     private static void Play(DownloadJob job)
     {
