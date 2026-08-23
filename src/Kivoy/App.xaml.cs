@@ -30,6 +30,7 @@ public partial class App : Application
         };
 
         SettingsStore.Load();
+        CookieVault.MigrateLegacyPlaintext();
         ThemeManager.Apply(SettingsStore.Instance.Theme);
         Microsoft.Win32.SystemEvents.UserPreferenceChanged += OnSystemThemeChanged;
 
@@ -44,6 +45,12 @@ public partial class App : Application
 
         MainWindow = window;
         window.Show();
+    }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        CookieVault.DeleteTemp();
+        base.OnExit(e);
     }
 
     private void OnSystemThemeChanged(object sender, Microsoft.Win32.UserPreferenceChangedEventArgs e)

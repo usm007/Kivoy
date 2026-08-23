@@ -6,7 +6,7 @@ namespace Kivoy.Services;
 
 public static class YouTubeCookieExporter
 {
-    public static string CookiePath => Path.Combine(SettingsStore.DataFolder, "youtube_cookies.txt");
+    public static string CookiePath => CookieVault.StorePath;
 
     public static async Task<(string Path, int Count, bool SignedIn)> ExportAsync(CoreWebView2CookieManager manager)
     {
@@ -30,18 +30,23 @@ public static class YouTubeCookieExporter
             sb.AppendLine($"{domain}\tTRUE\t{c.Path}\t{secure}\t{expires}\t{c.Name}\t{c.Value}");
         }
 
-        Directory.CreateDirectory(Path.GetDirectoryName(CookiePath)!);
-        File.WriteAllText(CookiePath, sb.ToString(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+        CookieVault.Save(sb.ToString());
 
         var signedIn = selected.Any(c => c.Name is "LOGIN_INFO" or "SID" or "SSID" or "__Secure-3PSID");
-        return (CookiePath, selected.Count, signedIn);
+        return (CookieVault.StorePath, selected.Count, signedIn);
     }
 
     public static void SignOut()
     {
-        if (File.Exists(CookiePath))
-            File.Delete(CookiePath);
-        if (string.Equals(SettingsStore.Instance.CookiesFile, CookiePath, StringComparison.OrdinalIgnoreCase))
+        CookieVault.DeleteAll();
+        try
+        {
+            if (File.Exists(CookieVault.LegacyPath))
+                File.Delete(CookieVault.LegacyPath);
+        }
+        catch { }
+
+        if (CookieVault.IsManagedPath(SettingsStore.Instance.CookiesFile))
         {
             SettingsStore.Instance.CookiesFile = null;
             SettingsStore.Save();

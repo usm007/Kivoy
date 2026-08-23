@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using Kivoy.Services;
@@ -13,8 +14,9 @@ public partial class MainWindow : Window
         DataContext = new MainViewModel();
         AppShell.ApplyWindowShell(this, ThemeManager.Current == "Dark");
 
-        Width = SettingsStore.Instance.WindowWidth;
-        Height = SettingsStore.Instance.WindowHeight;
+        // Restore persisted size, but never below the new design minimums.
+        Width = Math.Max(SettingsStore.Instance.WindowWidth, MinWidth);
+        Height = Math.Max(SettingsStore.Instance.WindowHeight, MinHeight);
 
         Closing += (_, _) =>
         {
@@ -23,6 +25,60 @@ public partial class MainWindow : Window
             s.WindowHeight = Height;
             SettingsStore.Save();
         };
+
+        Loaded += (_, _) =>
+        {
+            UpdateStorageCard();
+            if (DataContext is MainViewModel vm)
+                vm.PropertyChanged += OnViewModelPropertyChanged;
+        };
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MainViewModel.DestinationFolder))
+            UpdateStorageCard();
+    }
+
+    private void UpdateStorageCard()
+    {
+        try
+        {
+            if (DataContext is not MainViewModel vm || string.IsNullOrWhiteSpace(vm.DestinationFolder))
+            {
+                StorageCard.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            var root = Path.GetPathRoot(Path.GetFullPath(vm.DestinationFolder));
+            if (string.IsNullOrEmpty(root))
+            {
+                StorageCard.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            var drive = new DriveInfo(root);
+            if (!drive.IsReady || drive.TotalSize == 0)
+            {
+                StorageCard.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            var free = drive.AvailableFreeSpace;
+            var total = drive.TotalSize;
+            var usedPercent = (total - free) * 100.0 / total;
+
+            double FormatGb(long bytes) => bytes / 1024d / 1024d / 1024d;
+
+            StorageFreeText.Text =
+                $"{FormatGb(free):0.#} GB free of {FormatGb(total):0} GB";
+            StorageBar.Value = Math.Clamp(usedPercent, 0, 100);
+            StorageCard.Visibility = Visibility.Visible;
+        }
+        catch
+        {
+            StorageCard.Visibility = Visibility.Collapsed;
+        }
     }
 
     private void NewDownload_Click(object sender, RoutedEventArgs e)

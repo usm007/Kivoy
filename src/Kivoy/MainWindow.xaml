@@ -4,8 +4,8 @@
         xmlns:conv="clr-namespace:Kivoy.Converters"
         Title="Kivoy"
         Icon="pack://application:,,,/Assets/app_icon.png"
-        Width="672" Height="504"
-        MinWidth="600" MinHeight="480"
+        Width="1100" Height="700"
+        MinWidth="900" MinHeight="600"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource WindowBackground}"
         FontFamily="{DynamicResource AppFont}"
@@ -24,15 +24,13 @@
     <Grid>
         <Grid.RowDefinitions>
             <!-- Header -->
-            <RowDefinition Height="44" />
-            <!-- Error banner -->
-            <RowDefinition Height="Auto" />
-            <!-- Engine setup banner -->
+            <RowDefinition Height="68" />
+            <!-- Notifications -->
             <RowDefinition Height="Auto" />
             <!-- Content -->
             <RowDefinition Height="*" />
             <!-- Status bar -->
-            <RowDefinition Height="22" />
+            <RowDefinition Height="36" />
         </Grid.RowDefinitions>
 
         <!-- ======================= Header ======================= -->
@@ -40,97 +38,111 @@
                 Background="{DynamicResource CardBackground}"
                 BorderBrush="{DynamicResource CardBorder}"
                 BorderThickness="0,0,0,1">
-            <Grid Margin="12,0">
+            <Grid Margin="20,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Logo / app name -->
+                <!-- Identity -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                     <Image Source="pack://application:,,,/Assets/app_icon.png"
-                           Width="26" Height="26"
-                           Margin="0,0,10,0"
+                           Width="32" Height="32"
+                           Margin="0,0,12,0"
                            VerticalAlignment="Center"
                            RenderOptions.BitmapScalingMode="HighQuality" />
                     <TextBlock Text="Kivoy"
-                               FontSize="16"
+                               FontSize="19"
                                FontWeight="Bold"
                                Foreground="{DynamicResource TextPrimary}"
                                VerticalAlignment="Center" />
                 </StackPanel>
 
-                <!-- Right actions -->
+                <!-- Quick link input -->
+                <Border Grid.Column="1"
+                        MaxWidth="420"
+                        Height="40"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Background="{DynamicResource InputBackground}"
+                        BorderBrush="{DynamicResource InputBorder}"
+                        BorderThickness="1"
+                        CornerRadius="10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="&#xE721;"
+                                   FontFamily="{StaticResource IconFont}"
+                                   FontSize="13"
+                                   Foreground="{DynamicResource TextTertiary}"
+                                   VerticalAlignment="Center"
+                                   Margin="14,0,0,0" />
+                        <TextBox x:Name="QuickUrlBox"
+                                 Grid.Column="1"
+                                 Background="Transparent"
+                                 BorderBrush="Transparent"
+                                 BorderThickness="0"
+                                 Padding="10,0,4,0"
+                                 FontSize="13"
+                                 VerticalContentAlignment="Center"
+                                 ToolTip="Paste a YouTube link and press Enter"
+                                 Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding AnalyzeCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <Button Grid.Column="2"
+                                Style="{StaticResource IconButton}"
+                                Margin="0,0,4,0"
+                                Command="{Binding PasteUrlCommand}"
+                                ToolTip="Paste from clipboard">
+                            <TextBlock Text="&#xE77F;" FontFamily="{StaticResource IconFont}" FontSize="13" />
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <!-- Global actions -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
 
-                    <!-- New Download -->
                     <Button Style="{StaticResource PrimaryButton}"
-                            Padding="16,7"
-                            Margin="0,0,8,0"
+                            Height="40"
+                            Padding="18,0"
+                            Margin="0,0,10,0"
                             Click="NewDownload_Click"
                             ToolTip="Add a new download">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
                             <TextBlock Text="+"
                                        FontFamily="{StaticResource AppFont}"
-                                       FontSize="16"
+                                       FontSize="17"
                                        FontWeight="Bold"
                                        VerticalAlignment="Center"
-                                       LineHeight="16"
-                                       Margin="0,0,6,0" />
-                            <TextBlock Text="New Download" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" LineHeight="19" />
+                                       LineHeight="18"
+                                       Margin="0,1,7,0" />
+                            <TextBlock Text="New Download" FontSize="13.5" FontWeight="SemiBold" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
 
-                    <!-- Pause All -->
                     <Button Style="{StaticResource HeaderIconButton}"
-                            Margin="1,0"
                             Command="{Binding PauseAllCommand}"
-                            ToolTip="Pause all">
-                        <TextBlock Text="&#xE769;" FontFamily="{StaticResource IconFont}" FontSize="14" />
+                            ToolTip="Pause all downloads">
+                        <TextBlock Text="&#xE769;" FontFamily="{StaticResource IconFont}" />
                     </Button>
 
-                    <!-- Resume All -->
                     <Button Style="{StaticResource HeaderIconButton}"
-                            Margin="1,0"
-                            Command="{Binding ResumeAllCommand}"
-                            ToolTip="Resume all">
-                        <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" FontSize="14" />
-                    </Button>
-
-                    <!-- Clear Finished -->
-                    <Button Style="{StaticResource HeaderIconButton}"
-                            Margin="1,0"
-                            Command="{Binding ClearFinishedCommand}"
-                            ToolTip="Clear finished">
-                        <TextBlock Text="&#xE74D;" FontFamily="{StaticResource IconFont}" FontSize="14" />
-                    </Button>
-
-                    <!-- Separator -->
-                    <Border Width="1" Height="20" Background="{DynamicResource CardBorder}" Margin="6,0" />
-
-                    <!-- Open Folder -->
-                    <Button Style="{StaticResource HeaderIconButton}"
-                            Margin="1,0"
-                            Command="{Binding OpenDestinationCommand}"
-                            ToolTip="Open downloads folder">
-                        <TextBlock Text="&#xE8B7;" FontFamily="{StaticResource IconFont}" FontSize="14" />
-                    </Button>
-
-                    <!-- Settings -->
-                    <Button Style="{StaticResource HeaderIconButton}"
-                            Margin="1,0"
                             Command="{Binding OpenSettingsCommand}"
                             ToolTip="Settings">
-                        <TextBlock Text="&#xE713;" FontFamily="{StaticResource IconFont}" FontSize="14" />
+                        <TextBlock Text="&#xE713;" FontFamily="{StaticResource IconFont}" />
                     </Button>
 
-                    <!-- Theme toggle -->
                     <Button Style="{StaticResource HeaderIconButton}"
-                            Margin="1,0"
                             Command="{Binding ToggleThemeCommand}"
-                            ToolTip="Toggle light / dark">
-                        <TextBlock FontFamily="{StaticResource IconFont}" FontSize="14">
+                            ToolTip="Toggle light / dark theme">
+                        <TextBlock FontFamily="{StaticResource IconFont}">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="Text" Value="&#xE706;" />
@@ -144,521 +156,635 @@
                         </TextBlock>
                     </Button>
 
-                    <!-- Exit -->
-                    <Button Style="{StaticResource HeaderIconButton}"
-                            Margin="1,0"
-                            Command="{Binding ExitCommand}"
-                            ToolTip="Exit">
-                        <TextBlock Text="&#xE8BB;" FontFamily="{StaticResource IconFont}" FontSize="14" />
-                    </Button>
-
                 </StackPanel>
             </Grid>
         </Border>
 
-        <!-- ======================= Error banner ======================= -->
-        <Border Grid.Row="1"
-                Margin="18,8,18,0"
-                Background="{DynamicResource NotificationBackground}"
-                BorderBrush="{DynamicResource Error}"
-                BorderThickness="1"
-                CornerRadius="6"
-                Padding="12,8"
-                Visibility="{Binding Error, Converter={StaticResource IsNullOrEmptyToVisibilityConverter}}">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="&#xE7BA;"
-                           FontFamily="{StaticResource IconFont}"
-                           FontSize="13"
-                           Foreground="{DynamicResource Error}"
-                           VerticalAlignment="Center" />
-                <TextBlock Text="{Binding Error}"
-                           Foreground="{DynamicResource Error}"
-                           FontSize="13"
-                           TextWrapping="Wrap"
-                           VerticalAlignment="Center"
-                           Margin="8,0,0,0" />
-            </StackPanel>
-        </Border>
+        <!-- ======================= Notifications ======================= -->
+        <StackPanel Grid.Row="1">
 
-        <!-- ======================= Engine setup banner ======================= -->
-        <Border Grid.Row="2"
-                Margin="18,8,18,0"
-                Background="{DynamicResource NotificationBackground}"
-                BorderBrush="{DynamicResource CardBorder}"
-                BorderThickness="1"
-                CornerRadius="8"
-                Padding="14,10"
-                Visibility="{Binding EngineBusy, Converter={StaticResource BoolToVis}}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <ContentControl Style="{StaticResource Spinner}" Width="16" Height="16" VerticalAlignment="Center" />
-                <StackPanel Grid.Column="1" Margin="12,0,12,0" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding EngineStatusText}"
+            <!-- Error banner -->
+            <Border Margin="20,10,20,0"
+                    Background="{DynamicResource NotificationBackground}"
+                    BorderBrush="{DynamicResource Error}"
+                    BorderThickness="1"
+                    CornerRadius="10"
+                    Padding="14,9"
+                    Visibility="{Binding Error, Converter={StaticResource IsNullOrEmptyToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&#xE7BA;"
+                               FontFamily="{StaticResource IconFont}"
                                FontSize="13"
-                               FontWeight="SemiBold"
-                               Foreground="{DynamicResource TextPrimary}" />
-                    <ProgressBar Height="4"
-                                 Margin="0,6,0,0"
-                                 Value="{Binding EnginePercent, Mode=OneWay}"
-                                 Maximum="100" />
+                               Foreground="{DynamicResource Error}"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Error}"
+                               Foreground="{DynamicResource Error}"
+                               FontSize="13"
+                               TextWrapping="Wrap"
+                               VerticalAlignment="Center"
+                               Margin="10,0,0,0" />
                 </StackPanel>
-                <Button Grid.Column="2"
-                        Style="{StaticResource TextButton}"
-                        Visibility="{Binding EngineFailed, Converter={StaticResource BoolToVis}}"
-                        Command="{Binding RetryEngineCommand}"
-                        Content="Retry" />
-            </Grid>
-        </Border>
+            </Border>
+
+            <!-- Engine setup banner -->
+            <Border Margin="20,10,20,0"
+                    Background="{DynamicResource NotificationBackground}"
+                    BorderBrush="{DynamicResource CardBorder}"
+                    BorderThickness="1"
+                    CornerRadius="10"
+                    Padding="14,10"
+                    Visibility="{Binding EngineBusy, Converter={StaticResource BoolToVis}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ContentControl Style="{StaticResource Spinner}" Width="16" Height="16" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" Margin="12,0,12,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding EngineStatusText}"
+                                   FontSize="12.5"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextPrimary}" />
+                        <ProgressBar Height="5"
+                                     Margin="0,7,0,0"
+                                     Value="{Binding EnginePercent, Mode=OneWay}"
+                                     Maximum="100" />
+                    </StackPanel>
+                    <Button Grid.Column="2"
+                            Style="{StaticResource TextButton}"
+                            Visibility="{Binding EngineFailed, Converter={StaticResource BoolToVis}}"
+                            Command="{Binding RetryEngineCommand}"
+                            Content="Retry" />
+                </Grid>
+            </Border>
+
+        </StackPanel>
 
         <!-- ======================= Content ======================= -->
-        <Grid Grid.Row="3" Margin="0">
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="130" />
+                <ColumnDefinition Width="240" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!-- Sidebar -->
-            <Border BorderBrush="{DynamicResource CardBorder}"
+            <!-- ============ Sidebar ============ -->
+            <Border Grid.Column="0"
+                    BorderBrush="{DynamicResource CardBorder}"
                     BorderThickness="0,0,1,0"
                     Background="{DynamicResource SidebarBackground}">
-                <ListBox Style="{StaticResource Sidebar}"
-                         SelectedValuePath="Tag"
-                         SelectedValue="{Binding SelectedView, Mode=TwoWay}">
-                    <ListBoxItem Tag="All">
-                        <StackPanel Orientation="Horizontal" Margin="0,1">
-                            <TextBlock Text="&#xE8B7;"
-                                       FontFamily="{DynamicResource IconFont}"
-                                       FontSize="14"
-                                       Foreground="{DynamicResource GlyphColor}"
-                                       VerticalAlignment="Center" />
-                            <TextBlock Text="All downloads"
+                <DockPanel>
+
+                    <!-- Storage card (bottom) -->
+                    <Border x:Name="StorageCard"
+                            DockPanel.Dock="Bottom"
+                            Margin="12,0,12,12"
+                            Padding="14,12"
+                            Background="{DynamicResource CardBackground}"
+                            BorderBrush="{DynamicResource CardBorder}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Visibility="Collapsed">
+                        <StackPanel>
+                            <TextBlock Text="STORAGE" Style="{StaticResource SidebarSectionHeader}" Margin="0,0,0,6" />
+                            <TextBlock x:Name="StorageFreeText"
                                        FontSize="13"
-                                       Margin="10,0,0,0"
-                                       VerticalAlignment="Center" />
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimary}" />
+                            <ProgressBar x:Name="StorageBar"
+                                         Height="5"
+                                         Margin="0,8,0,0"
+                                         Minimum="0"
+                                         Maximum="100" />
                         </StackPanel>
-                    </ListBoxItem>
-                    <ListBoxItem Tag="Active">
-                        <StackPanel Orientation="Horizontal" Margin="0,1">
-                            <Control Style="{StaticResource DownloadGlyph}"
-                                     Foreground="{DynamicResource Success}" />
-                            <TextBlock Text="Active"
-                                       FontSize="13"
-                                       Margin="10,0,0,0"
-                                       VerticalAlignment="Center" />
-                            <Border Background="{DynamicResource AccentSubtle}"
-                                    CornerRadius="10"
-                                    Padding="7,2"
-                                    Margin="8,0,0,0"
-                                    VerticalAlignment="Center"
-                                    Visibility="{Binding HasActive, Converter={StaticResource BoolToVis}}">
-                                <TextBlock Text="{Binding ActiveCount}"
-                                           FontSize="10.5"
-                                           FontWeight="SemiBold"
-                                           Foreground="{DynamicResource Accent}" />
-                            </Border>
+                    </Border>
+
+                    <!-- Tools (bottom) -->
+                    <StackPanel DockPanel.Dock="Bottom" Margin="0,4,0,0">
+                        <TextBlock Text="TOOLS" Style="{StaticResource SidebarSectionHeader}" />
+                        <Button Style="{StaticResource NavItemButton}"
+                                Command="{Binding OpenDestinationCommand}"
+                                ToolTip="Open the downloads folder">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE8B7;"
+                                           FontFamily="{StaticResource IconFont}"
+                                           FontSize="15"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="Open Folder" Margin="12,0,0,0" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource NavItemButton}"
+                                Command="{Binding OpenSettingsCommand}"
+                                ToolTip="Open settings">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE713;"
+                                           FontFamily="{StaticResource IconFont}"
+                                           FontSize="15"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="Settings" Margin="12,0,0,0" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Navigation -->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel Margin="0,16,0,8">
+                            <TextBlock Text="DOWNLOADS" Style="{StaticResource SidebarSectionHeader}" />
+                            <ListBox Style="{StaticResource Sidebar}"
+                                     SelectedValuePath="Tag"
+                                     SelectedValue="{Binding SelectedView, Mode=TwoWay}">
+                                <ListBoxItem Tag="All">
+                                    <DockPanel>
+                                        <Border Style="{StaticResource CountBadge}" DockPanel.Dock="Right">
+                                            <TextBlock Text="{Binding ActiveJobs.Count}"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource Accent}" />
+                                        </Border>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xE80F;"
+                                                       FontFamily="{StaticResource IconFont}"
+                                                       FontSize="15"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Text="All Downloads" Margin="12,0,0,0" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </ListBoxItem>
+                                <ListBoxItem Tag="Active">
+                                    <DockPanel>
+                                        <Border Style="{StaticResource CountBadge}" DockPanel.Dock="Right"
+                                                Visibility="{Binding HasActive, Converter={StaticResource BoolToVis}}">
+                                            <TextBlock Text="{Binding ActiveCount}"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource Accent}" />
+                                        </Border>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Control Style="{StaticResource DownloadGlyph}"
+                                                     Width="15"
+                                                     Height="15"
+                                                     VerticalAlignment="Center" />
+                                            <TextBlock Text="Active" Margin="12,0,0,0" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </ListBoxItem>
+                                <ListBoxItem Tag="Completed">
+                                    <DockPanel>
+                                        <Border Style="{StaticResource CountBadge}" DockPanel.Dock="Right"
+                                                Visibility="{Binding HasHistory, Converter={StaticResource BoolToVis}}">
+                                            <TextBlock Text="{Binding HistoryCount}"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource Accent}" />
+                                        </Border>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xE73E;"
+                                                       FontFamily="{StaticResource IconFont}"
+                                                       FontSize="15"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Text="Completed" Margin="12,0,0,0" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </ListBoxItem>
+                            </ListBox>
                         </StackPanel>
-                    </ListBoxItem>
-                    <ListBoxItem Tag="Completed">
-                        <StackPanel Orientation="Horizontal" Margin="0,1">
-                            <TextBlock Text="&#xE73E;"
-                                       FontFamily="{DynamicResource IconFont}"
-                                       FontSize="14"
-                                       Foreground="{DynamicResource GlyphColor}"
-                                       VerticalAlignment="Center" />
-                            <TextBlock Text="Completed"
-                                       FontSize="13"
-                                       Margin="10,0,0,0"
-                                       VerticalAlignment="Center" />
-                            <Border Background="{DynamicResource AccentSubtle}"
-                                    CornerRadius="10"
-                                    Padding="7,2"
-                                    Margin="8,0,0,0"
-                                    VerticalAlignment="Center"
-                                    Visibility="{Binding HasHistory, Converter={StaticResource BoolToVis}}">
-                                <TextBlock Text="{Binding HistoryCount}"
-                                           FontSize="10.5"
-                                           FontWeight="SemiBold"
-                                           Foreground="{DynamicResource Accent}" />
-                            </Border>
-                        </StackPanel>
-                    </ListBoxItem>
-                </ListBox>
+                    </ScrollViewer>
+                </DockPanel>
             </Border>
 
-            <!-- Downloads table -->
-            <Grid Grid.Column="1" Margin="0"
+            <!-- ============ Jobs view ============ -->
+            <Grid Grid.Column="1"
                   Visibility="{Binding IsJobsView, Converter={StaticResource BoolToVis}}">
-                <ListView ItemsSource="{Binding ViewJobs}"
-                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- Page header -->
+                <Grid Grid.Row="0" Margin="24,18,24,4">
+                    <StackPanel>
+                        <TextBlock Text="Active Downloads" Style="{StaticResource PageTitle}" />
+                        <TextBlock Text="{Binding StatusBarText}" Style="{StaticResource PageSubtitle}" Margin="0,3,0,0" />
+                    </StackPanel>
+                    <Border Style="{StaticResource CountBadge}" HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Visibility="{Binding HasActive, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="{Binding ActiveCount}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource Accent}" />
+                    </Border>
+                </Grid>
+
+                <!-- Download cards -->
+                <ListView Grid.Row="1"
+                          Margin="24,8,24,16"
+                          ItemsSource="{Binding ViewJobs}"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          Padding="0"
+                          SelectionMode="Single"
                           PreviewMouseDoubleClick="DownloadsList_DoubleClick">
                     <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem" BasedOn="{StaticResource GridViewRowItem}">
-                            <Setter Property="ContextMenu">
-                                <Setter.Value>
-                                    <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
-                                        <MenuItem Header="Play" Command="{Binding PlayCommand}" />
-                                        <MenuItem Header="Open Folder" Command="{Binding OpenFolderCommand}" />
-                                        <Separator />
-                                        <MenuItem Header="Pause" Command="{Binding PauseCommand}" />
-                                        <MenuItem Header="Resume" Command="{Binding ResumeCommand}" />
-                                        <MenuItem Header="Cancel" Command="{Binding CancelCommand}" />
-                                        <MenuItem Header="Retry" Command="{Binding RetryCommand}" />
-                                        <Separator />
-                                        <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
-                                    </ContextMenu>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
+                        <Style TargetType="ListViewItem" BasedOn="{StaticResource DownloadCardItem}" />
                     </ListView.ItemContainerStyle>
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="FILE NAME" Width="160">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel VerticalAlignment="Center" Margin="0,4">
-                                            <TextBlock Text="{Binding Title}"
-                                                       FontSize="13"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="{DynamicResource TextPrimary}"
-                                                       TextTrimming="CharacterEllipsis" />
-                                            <TextBlock Text="{Binding StatusText}"
-                                                       FontSize="11"
-                                                       Foreground="{DynamicResource TextTertiary}"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       Margin="0,2,0,0" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="SIZE" Width="60">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding SizeText}"
-                                                   FontSize="12"
-                                                   Foreground="{DynamicResource TextSecondary}"
-                                                   VerticalAlignment="Center" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="PROGRESS" Width="90">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <ProgressBar Height="4"
-                                                         Margin="0,0,44,0"
-                                                         VerticalAlignment="Center"
-                                                         Value="{Binding Percent}"
-                                                         Maximum="100"
-                                                         IsIndeterminate="{Binding IsIndeterminate}"
-                                                         Visibility="{Binding IsProgressVisible, Converter={StaticResource BoolToVis}}" />
-                                            <TextBlock Text="{Binding Percent, StringFormat={}{0:0}%}"
-                                                       FontSize="11"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="{DynamicResource TextSecondary}"
-                                                       HorizontalAlignment="Right"
-                                                       VerticalAlignment="Center"
-                                                       Visibility="{Binding IsProgressVisible, Converter={StaticResource BoolToVis}}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="SPEED" Width="55">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding SpeedText}"
-                                                   FontSize="12"
-                                                   Foreground="{DynamicResource TextSecondary}"
-                                                   VerticalAlignment="Center" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="ETA" Width="50">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding EtaText}"
-                                                   FontSize="12"
-                                                   Foreground="{DynamicResource TextSecondary}"
-                                                   VerticalAlignment="Center" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="SAVED TO" Width="80">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding FolderPath}"
-                                                   FontSize="11"
-                                                   Foreground="{DynamicResource TextTertiary}"
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="176" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Thumbnail -->
+                                <Grid Grid.Column="0" Width="176" Height="99" VerticalAlignment="Center">
+                                    <Border CornerRadius="8" Background="{DynamicResource ThumbnailBg}" ClipToBounds="True">
+                                        <Image Source="{Binding Thumbnail}"
+                                               Stretch="UniformToFill"
+                                               RenderOptions.BitmapScalingMode="HighQuality" />
+                                    </Border>
+                                    <!-- Placeholder when thumbnail missing -->
+                                    <Border CornerRadius="8" Background="{DynamicResource ThumbnailBg}">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Thumbnail}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Hidden" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <Control Style="{StaticResource DownloadGlyph}"
+                                                 Width="26" Height="26"
+                                                 HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                 Foreground="{DynamicResource GlyphSecondary}" />
+                                    </Border>
+                                </Grid>
+
+                                <!-- Info -->
+                                <StackPanel Grid.Column="1" Margin="16,0,14,0" VerticalAlignment="Center">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Title}"
+                                                   FontSize="14.5"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextPrimary}"
                                                    TextTrimming="CharacterEllipsis"
                                                    VerticalAlignment="Center" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Width="90">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <Button Style="{StaticResource IconButton}"
-                                                    Command="{Binding OpenFolderCommand}"
-                                                    ToolTip="Open folder">
-                                                <TextBlock Text="&#xE838;" FontFamily="{DynamicResource IconFont}" FontSize="12" />
-                                            </Button>
-                                            <Button Style="{StaticResource IconButton}"
-                                                    Command="{Binding PlayCommand}"
-                                                    ToolTip="Play"
-                                                    Visibility="{Binding OutputExists, Converter={StaticResource BoolToVis}}">
-                                                <TextBlock Text="&#xE768;" FontFamily="{DynamicResource IconFont}" FontSize="12" />
-                                            </Button>
-                                            <Button Style="{StaticResource IconButton}"
-                                                    Command="{Binding PauseCommand}"
-                                                    ToolTip="Pause"
-                                                    Visibility="{Binding CanPause, Converter={StaticResource BoolToVis}}">
-                                                <TextBlock Text="&#xE769;" FontFamily="{DynamicResource IconFont}" FontSize="12" />
-                                            </Button>
-                                            <Button Style="{StaticResource IconButton}"
-                                                    Command="{Binding ResumeCommand}"
-                                                    ToolTip="Resume"
-                                                    Visibility="{Binding CanResume, Converter={StaticResource BoolToVis}}">
-                                                <TextBlock Text="&#xE768;" FontFamily="{DynamicResource IconFont}" FontSize="12" />
-                                            </Button>
-                                            <Button Style="{StaticResource IconButton}"
-                                                    Command="{Binding RetryCommand}"
-                                                    ToolTip="Retry"
-                                                    Visibility="{Binding CanRetry, Converter={StaticResource BoolToVis}}">
-                                                <TextBlock Text="&#xE72C;" FontFamily="{DynamicResource IconFont}" FontSize="12" />
-                                            </Button>
-                                            <Button Style="{StaticResource IconButton}"
-                                                    Command="{Binding CancelCommand}"
-                                                    ToolTip="Cancel"
-                                                    Visibility="{Binding CanCancel, Converter={StaticResource BoolToVis}}">
-                                                <TextBlock Text="&#xE711;" FontFamily="{DynamicResource IconFont}" FontSize="12" />
-                                            </Button>
-                                            <Button Style="{StaticResource IconButton}"
-                                                    Command="{Binding RemoveCommand}"
-                                                    ToolTip="Remove"
-                                                    Visibility="{Binding IsDone, Converter={StaticResource BoolToVis}}">
-                                                <TextBlock Text="&#xE74D;" FontFamily="{DynamicResource IconFont}" FontSize="12" />
-                                            </Button>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
+                                        <!-- Percent while running, state otherwise -->
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding Percent, StringFormat={}{0:0}%}"
+                                                   FontSize="12"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource Accent}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="10,0,0,0"
+                                                   Visibility="{Binding IsProgressVisible, Converter={StaticResource BoolToVis}}" />
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding StateText}"
+                                                   FontSize="11.5"
+                                                   Foreground="{DynamicResource TextSecondary}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="10,0,0,0"
+                                                   Visibility="{Binding IsProgressVisible, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                                    </Grid>
+
+                                    <!-- Metadata -->
+                                    <TextBlock FontSize="11.5" Foreground="{DynamicResource TextTertiary}" Margin="0,3,0,0"
+                                               TextTrimming="CharacterEllipsis">
+                                        <Run Text="{Binding Item.Channel, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{Binding Options.Mode, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{Binding Options.Quality.Label, Mode=OneWay}" />
+                                    </TextBlock>
+
+                                    <!-- Progress bar -->
+                                    <ProgressBar Height="5"
+                                                 Margin="0,10,0,0"
+                                                 Value="{Binding Percent}"
+                                                 Maximum="100"
+                                                 IsIndeterminate="{Binding IsIndeterminate}"
+                                                 Visibility="{Binding IsProgressVisible, Converter={StaticResource BoolToVis}}" />
+
+                                    <!-- Stats row -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                        <TextBlock Text="{Binding SizeText}" FontSize="11.5" Foreground="{DynamicResource TextSecondary}" />
+                                        <TextBlock Text="  ·  " FontSize="11.5" Foreground="{DynamicResource TextTertiary}"
+                                                   Visibility="{Binding SpeedText, Converter={StaticResource IsNullOrEmptyToVisibilityConverter}}" />
+                                        <TextBlock Text="{Binding SpeedText}" FontSize="11.5" Foreground="{DynamicResource TextSecondary}" />
+                                        <TextBlock Text="  ·  " FontSize="11.5" Foreground="{DynamicResource TextTertiary}"
+                                                   Visibility="{Binding EtaText, Converter={StaticResource IsNullOrEmptyToVisibilityConverter}}" />
+                                        <TextBlock Text="{Binding EtaText}" FontSize="11.5" Foreground="{DynamicResource TextSecondary}" />
+                                        <TextBlock Text="{Binding StatusText}" FontSize="11.5" Foreground="{DynamicResource TextSecondary}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Visibility="{Binding IsProgressVisible, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <!-- Actions -->
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button Style="{StaticResource CardActionButton}"
+                                            Command="{Binding PauseCommand}"
+                                            ToolTip="Pause"
+                                            Visibility="{Binding CanPause, Converter={StaticResource BoolToVis}}">
+                                        <TextBlock Text="&#xE769;" FontFamily="{StaticResource IconFont}" />
+                                    </Button>
+                                    <Button Style="{StaticResource CardActionButton}"
+                                            Command="{Binding ResumeCommand}"
+                                            ToolTip="Resume"
+                                            Visibility="{Binding CanResume, Converter={StaticResource BoolToVis}}">
+                                        <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" />
+                                    </Button>
+                                    <Button Style="{StaticResource CardActionButton}"
+                                            Command="{Binding CancelCommand}"
+                                            ToolTip="Cancel"
+                                            Visibility="{Binding CanCancel, Converter={StaticResource BoolToVis}}">
+                                        <TextBlock Text="&#xE711;" FontFamily="{StaticResource IconFont}" />
+                                    </Button>
+                                    <Button Style="{StaticResource CardActionButton}"
+                                            Command="{Binding RetryCommand}"
+                                            ToolTip="Retry"
+                                            Visibility="{Binding CanRetry, Converter={StaticResource BoolToVis}}">
+                                        <TextBlock Text="&#xE72C;" FontFamily="{StaticResource IconFont}" />
+                                    </Button>
+                                    <Button Style="{StaticResource CardActionButton}"
+                                            Command="{Binding PlayCommand}"
+                                            ToolTip="Play"
+                                            Visibility="{Binding OutputExists, Converter={StaticResource BoolToVis}}">
+                                        <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" />
+                                    </Button>
+                                    <Button Style="{StaticResource CardActionButton}"
+                                            Command="{Binding OpenFolderCommand}"
+                                            ToolTip="Open folder">
+                                        <TextBlock Text="&#xE838;" FontFamily="{StaticResource IconFont}" />
+                                    </Button>
+                                    <Button Style="{StaticResource CardActionButton}"
+                                            Command="{Binding RemoveCommand}"
+                                            ToolTip="Remove"
+                                            Visibility="{Binding IsDone, Converter={StaticResource BoolToVis}}">
+                                        <TextBlock Text="&#xE74D;" FontFamily="{StaticResource IconFont}" />
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                 </ListView>
 
                 <!-- Empty state -->
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"
                             Visibility="{Binding HasActive, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                    <Border Width="56" Height="56" CornerRadius="28" Background="{DynamicResource CardBackground}" HorizontalAlignment="Center">
+                    <Border Width="72" Height="72" CornerRadius="36"
+                            Background="{DynamicResource ThumbnailBg}"
+                            HorizontalAlignment="Center">
                         <Control Style="{StaticResource DownloadGlyph}"
-                                 Width="26"
-                                 Height="26"
-                                 Foreground="{DynamicResource TextTertiary}"
-                                 Opacity="0.6" />
+                                 Width="34" Height="34"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center"
+                                 Foreground="{DynamicResource GlyphSecondary}" />
                     </Border>
-                    <TextBlock Text="No active downloads"
-                               FontSize="14.5"
+                    <TextBlock Text="No downloads yet"
+                               FontSize="18"
                                FontWeight="SemiBold"
-                               Foreground="{DynamicResource TextSecondary}"
+                               Foreground="{DynamicResource TextPrimary}"
                                HorizontalAlignment="Center"
-                               Margin="0,14,0,0" />
-                    <TextBlock Text="Click New Download and paste a link to get started."
-                               FontSize="12"
+                               Margin="0,20,0,0" />
+                    <TextBlock Text="Start by adding a download or paste a link above."
+                               FontSize="13"
                                Foreground="{DynamicResource TextTertiary}"
                                HorizontalAlignment="Center"
-                               Margin="0,4,0,0" />
+                               Margin="0,6,0,0" />
+                    <Button Style="{StaticResource PrimaryButton}"
+                            Height="40"
+                            Padding="18,0"
+                            Margin="0,22,0,0"
+                            HorizontalAlignment="Center"
+                            Click="NewDownload_Click"
+                            ToolTip="Add a new download">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="+"
+                                       FontFamily="{StaticResource AppFont}"
+                                       FontSize="17"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       LineHeight="18"
+                                       Margin="0,1,7,0" />
+                            <TextBlock Text="New Download" FontSize="13.5" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </Grid>
 
-            <!-- History table -->
-            <Grid Grid.Column="1" Margin="0"
+            <!-- ============ Completed view ============ -->
+            <Grid Grid.Column="1"
                   Visibility="{Binding IsCompletedView, Converter={StaticResource BoolToVis}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <!-- Search bar -->
-                <Border Grid.Row="0"
-                        Margin="18,12,18,0"
-                        Background="{DynamicResource InputBackground}"
-                        BorderBrush="{DynamicResource InputBorder}"
-                        BorderThickness="1"
-                        CornerRadius="8"
-                        Height="36">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="&#xE721;"
-                                   FontFamily="{StaticResource IconFont}"
-                                   FontSize="12"
-                                   Foreground="{DynamicResource TextTertiary}"
-                                   VerticalAlignment="Center"
-                                   Margin="12,0,0,0" />
-                        <TextBox Grid.Column="1"
-                                 Background="Transparent"
-                                 BorderBrush="Transparent"
-                                 BorderThickness="0"
-                                 Padding="8,0"
-                                 VerticalContentAlignment="Center"
-                                 Text="{Binding HistorySearch, UpdateSourceTrigger=PropertyChanged}"
-                                 FontSize="13" />
-                    </Grid>
-                </Border>
+                <!-- Page header + search -->
+                <Grid Grid.Row="0" Margin="24,18,24,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Completed Downloads" Style="{StaticResource PageTitle}" />
+                        <TextBlock Text="{Binding HistoryCount, StringFormat='{}{0} items in history'}"
+                                   Style="{StaticResource PageSubtitle}" Margin="0,3,0,0" />
+                    </StackPanel>
+                    <Border Grid.Column="1"
+                            Width="260"
+                            Height="36"
+                            VerticalAlignment="Center"
+                            Background="{DynamicResource InputBackground}"
+                            BorderBrush="{DynamicResource InputBorder}"
+                            BorderThickness="1"
+                            CornerRadius="10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="&#xE721;"
+                                       FontFamily="{StaticResource IconFont}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextTertiary}"
+                                       VerticalAlignment="Center"
+                                       Margin="12,0,0,0" />
+                            <TextBox Grid.Column="1"
+                                     Background="Transparent"
+                                     BorderBrush="Transparent"
+                                     BorderThickness="0"
+                                     Padding="8,0"
+                                     FontSize="12.5"
+                                     VerticalContentAlignment="Center"
+                                     Text="{Binding HistorySearch, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                    </Border>
+                </Grid>
 
-                <ListView Grid.Row="1" Margin="0,10,0,0"
+                <!-- Compact completed rows -->
+                <ListView Grid.Row="1"
+                          Margin="24,8,24,16"
                           ItemsSource="{Binding HistoryItems}"
-                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          Padding="0"
+                          SelectionMode="Single"
                           PreviewMouseDoubleClick="HistoryList_DoubleClick">
                     <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem" BasedOn="{StaticResource GridViewRowItem}">
-                            <Setter Property="ContextMenu">
-                                <Setter.Value>
-                                    <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
-                                        <MenuItem Header="Play" Command="{Binding PlayCommand}" />
-                                        <MenuItem Header="Open Folder" Command="{Binding OpenFolderCommand}" />
-                                        <MenuItem Header="Copy Link" Command="{Binding CopyLinkCommand}" />
-                                        <Separator />
-                                        <MenuItem Header="Download Again" Command="{Binding RedownloadCommand}" />
-                                        <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
-                                    </ContextMenu>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
+                        <Style TargetType="ListViewItem" BasedOn="{StaticResource CompletedRowItem}" />
                     </ListView.ItemContainerStyle>
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="FILE NAME" Width="160">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel VerticalAlignment="Center" Margin="0,4">
-                                            <TextBlock Text="{Binding Title}"
-                                                       FontSize="13"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="{DynamicResource TextPrimary}"
-                                                       TextTrimming="CharacterEllipsis" />
-                                            <TextBlock Text="{Binding MetaText}"
-                                                       FontSize="11"
-                                                       Foreground="{DynamicResource TextTertiary}"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       Margin="0,2,0,0" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="QUALITY" Width="70">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Entry.QualityText}"
-                                                   FontSize="12"
-                                                   Foreground="{DynamicResource TextSecondary}"
-                                                   VerticalAlignment="Center" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="SAVED TO" Width="95">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Entry.FilePath}"
-                                                   FontSize="11"
-                                                   Foreground="{DynamicResource TextTertiary}"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   VerticalAlignment="Center" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="COMPLETED" Width="85">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Entry.CompletedAt, StringFormat={}{0:MMM d, yyyy HH:mm}}"
-                                                   FontSize="12"
-                                                   Foreground="{DynamicResource TextSecondary}"
-                                                   VerticalAlignment="Center" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Width="75">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <Button Style="{StaticResource IconButton}"
-                                                    Command="{Binding PlayCommand}"
-                                                    ToolTip="Play"
-                                                    Visibility="{Binding HasFile, Converter={StaticResource BoolToVis}}">
-                                                <TextBlock Text="&#xE768;" FontFamily="{DynamicResource IconFont}" FontSize="12" />
-                                            </Button>
-                                            <Button Style="{StaticResource IconButton}"
-                                                    Command="{Binding OpenFolderCommand}"
-                                                    ToolTip="Open file location">
-                                                <TextBlock Text="&#xE838;" FontFamily="{DynamicResource IconFont}" FontSize="12" />
-                                            </Button>
-                                            <Button Style="{StaticResource IconButton}"
-                                                    Command="{Binding RedownloadCommand}"
-                                                    ToolTip="Download again">
-                                                <Control Style="{StaticResource DownloadGlyph}" Width="13" Height="13" />
-                                            </Button>
-                                            <Button Style="{StaticResource IconButton}"
-                                                    Command="{Binding RemoveCommand}"
-                                                    ToolTip="Remove from history">
-                                                <TextBlock Text="&#xE74D;" FontFamily="{DynamicResource IconFont}" FontSize="12" />
-                                            </Button>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Done marker -->
+                                <Border Width="28" Height="28" CornerRadius="14"
+                                        Background="{DynamicResource AccentSubtle}"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="&#xE73E;"
+                                               FontFamily="{StaticResource IconFont}"
+                                               FontSize="12"
+                                               Foreground="{DynamicResource Success}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                </Border>
+
+                                <!-- Small thumbnail -->
+                                <Border Grid.Column="1" Width="100" Height="56" CornerRadius="6"
+                                        Background="{DynamicResource ThumbnailBg}"
+                                        ClipToBounds="True"
+                                        Margin="12,0,0,0"
+                                        VerticalAlignment="Center">
+                                    <Image Source="{Binding Thumbnail}"
+                                           Stretch="UniformToFill"
+                                           RenderOptions.BitmapScalingMode="LowQuality" />
+                                </Border>
+
+                                <!-- Title + meta -->
+                                <StackPanel Grid.Column="2" Margin="12,0,12,0" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Title}"
+                                               FontSize="13.5"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextPrimary}"
+                                               TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{Binding MetaText}"
+                                               FontSize="11.5"
+                                               Foreground="{DynamicResource TextTertiary}"
+                                               TextTrimming="CharacterEllipsis"
+                                               Margin="0,2,0,0" />
+                                </StackPanel>
+
+                                <!-- Actions -->
+                                <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button Style="{StaticResource CardActionButton}"
+                                            Command="{Binding PlayCommand}"
+                                            ToolTip="Play"
+                                            Visibility="{Binding HasFile, Converter={StaticResource BoolToVis}}">
+                                        <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" />
+                                    </Button>
+                                    <Button Style="{StaticResource CardActionButton}"
+                                            Command="{Binding OpenFolderCommand}"
+                                            ToolTip="Open file location">
+                                        <TextBlock Text="&#xE838;" FontFamily="{StaticResource IconFont}" />
+                                    </Button>
+                                    <Button Style="{StaticResource CardActionButton}"
+                                            Command="{Binding RedownloadCommand}"
+                                            ToolTip="Download again">
+                                        <Control Style="{StaticResource DownloadGlyph}" Width="13" Height="13" />
+                                    </Button>
+                                    <Button Style="{StaticResource CardActionButton}"
+                                            Command="{Binding RemoveCommand}"
+                                            ToolTip="Remove from history">
+                                        <TextBlock Text="&#xE74D;" FontFamily="{StaticResource IconFont}" />
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                 </ListView>
 
-                <!-- Empty state -->
+                <!-- Empty history -->
                 <StackPanel Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"
                             Visibility="{Binding HasHistory, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                    <Border Width="56" Height="56" CornerRadius="28" Background="{DynamicResource CardBackground}" HorizontalAlignment="Center">
+                    <Border Width="72" Height="72" CornerRadius="36"
+                            Background="{DynamicResource ThumbnailBg}"
+                            HorizontalAlignment="Center">
                         <TextBlock Text="&#xE81C;"
-                                   FontFamily="{DynamicResource IconFont}"
-                                   FontSize="24"
-                                   Foreground="{DynamicResource TextTertiary}"
+                                   FontFamily="{StaticResource IconFont}"
+                                   FontSize="30"
+                                   Foreground="{DynamicResource GlyphSecondary}"
                                    HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Opacity="0.6" />
+                                   VerticalAlignment="Center" />
                     </Border>
                     <TextBlock Text="Nothing here yet"
-                               FontSize="14.5"
+                               FontSize="18"
                                FontWeight="SemiBold"
-                               Foreground="{DynamicResource TextSecondary}"
+                               Foreground="{DynamicResource TextPrimary}"
                                HorizontalAlignment="Center"
-                               Margin="0,14,0,0" />
+                               Margin="0,20,0,0" />
                     <TextBlock Text="Completed downloads will appear here."
-                               FontSize="12"
+                               FontSize="13"
                                Foreground="{DynamicResource TextTertiary}"
                                HorizontalAlignment="Center"
-                               Margin="0,4,0,0" />
+                               Margin="0,6,0,0" />
                 </StackPanel>
             </Grid>
         </Grid>
 
         <!-- ======================= Status bar ======================= -->
-        <Border Grid.Row="4"
+        <Border Grid.Row="3"
                 Background="{DynamicResource StatusBarBackground}"
                 BorderBrush="{DynamicResource CardBorder}"
                 BorderThickness="0,1,0,0"
-                Padding="18,0">
+                Padding="20,0">
             <Grid>
-                <TextBlock Text="{Binding StatusBarText}"
-                           FontSize="11"
-                           Foreground="{DynamicResource TextTertiary}"
-                           VerticalAlignment="Center" />
-                <TextBlock Text="{Binding EngineStatusText}"
-                           FontSize="11"
-                           Foreground="{DynamicResource TextTertiary}"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Kivoy"
+                               FontSize="11.5"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextTertiary}"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="   ·   " FontSize="11.5" Foreground="{DynamicResource TextDisabled}" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding StatusBarText}"
+                               FontSize="11.5"
+                               Foreground="{DynamicResource TextTertiary}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Ellipse Width="8" Height="8" VerticalAlignment="Center" Margin="0,0,7,0">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Fill" Value="{DynamicResource ProgressTrack}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding EngineReady}" Value="True">
+                                        <Setter Property="Fill" Value="{DynamicResource Success}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding EngineBusy}" Value="True">
+                                        <Setter Property="Fill" Value="{DynamicResource Warning}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding EngineFailed}" Value="True">
+                                        <Setter Property="Fill" Value="{DynamicResource Error}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+                    <TextBlock Text="{Binding EngineStatusText}"
+                               FontSize="11.5"
+                               Foreground="{DynamicResource TextTertiary}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
             </Grid>
         </Border>
     </Grid>

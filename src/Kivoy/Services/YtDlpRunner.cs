@@ -27,10 +27,17 @@ public static class YtDlpRunner
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
 
-        if (SettingsStore.Instance.CookiesFile is { } cf && File.Exists(cf))
+        var cf = SettingsStore.Instance.CookiesFile;
+        if (!string.IsNullOrWhiteSpace(cf) && File.Exists(cf))
         {
-            psi.ArgumentList.Add("--cookies");
-            psi.ArgumentList.Add(cf);
+            string? effective = CookieVault.IsManagedPath(cf)
+                ? CookieVault.PrepareTempCopy()
+                : cf;
+            if (effective is not null)
+            {
+                psi.ArgumentList.Add("--cookies");
+                psi.ArgumentList.Add(effective);
+            }
         }
 
         if (!string.IsNullOrWhiteSpace(SettingsStore.Instance.Proxy))
